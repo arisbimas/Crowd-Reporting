@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "768180535372",
+    "firebase_url": "https://laravelcoba-784a1.firebaseio.com",
+    "project_id": "laravelcoba-784a1",
+    "storage_bucket": "laravelcoba-784a1.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:768180535372:android:163abe42aeaad2e6",
+        "android_client_info": {
+          "package_name": "com.aris.crowdreporting"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "768180535372-7545aqur7h5vhlr7svf1f4ch6c8u24rv.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.aris.crowdreporting",
+            "certificate_hash": "bb44dac3c07c494589eb9b37d46347727096f70d"
+          }
+        },
+        {
+          "client_id": "768180535372-pe8f8ugbhqnhgbe6hn7nvbcaiklg0udk.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCQOj4Qor-Oemh7-xfsfSQbAtHhhGpBSKA"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "768180535372-pe8f8ugbhqnhgbe6hn7nvbcaiklg0udk.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

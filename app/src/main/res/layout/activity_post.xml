@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".PostActivity">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <ImageButton
+                android:id="@+id/post_image"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                android:adjustViewBounds="true"
+                android:background="@android:color/white"
+                android:scaleType="centerCrop"
+                android:src="@mipmap/add_btn"></ImageButton>
+
+            <EditText
+                android:id="@+id/inp_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/post_image"
+                android:layout_margin="20dp"
+                android:padding="15dp"
+                android:background="@drawable/inp_outline"
+                android:hint="Title" />
+
+            <EditText
+                android:id="@+id/inp_desc"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/inp_title"
+                android:layout_margin="20dp"
+                android:padding="15dp"
+                android:background="@drawable/inp_outline"
+                android:hint="Desciption" />
+            <Button
+                android:id="@+id/btn_post"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:textColor="@android:color/white"
+                android:background="@color/colorPrimary"
+                android:text="Post"/>
+        </LinearLayout>
+    </ScrollView>
+</RelativeLayout>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/nav_home"
+        android:icon="@drawable/baseline_home_white_24"
+        android:title="Home" />
+
+    <item
+        android:id="@+id/nav_near"
+        android:icon="@drawable/baseline_near_me_white_24"
+        android:title="Near Me" />
+
+    <item
+        android:id="@+id/nav_account"
+        android:icon="@drawable/baseline_account_circle_white_24"
+        android:title="Account" />
+    <item
+        android:id="@+id/nav_notiif"
+        android:icon="@drawable/baseline_notifications_active_24"
+        android:title="Notification" />
+
+    <!--<item android:id="@+id/navigation_setting"-->
+        <!--android:title="Setting"-->
+        <!--android:icon="@drawable/ic_settings" />-->
+
+    <!--<item android:id="@+id/navigation_info"-->
+        <!--android:title="Info"-->
+        <!--android:icon="@drawable/ic_info" />-->
+</menu>
