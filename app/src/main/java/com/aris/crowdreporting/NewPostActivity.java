@@ -2,6 +2,7 @@ package com.aris.crowdreporting;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
@@ -63,6 +64,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import dmax.dialog.SpotsDialog;
+
 public class NewPostActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
         LocationListener{
@@ -112,7 +115,7 @@ public class NewPostActivity extends AppCompatActivity implements GoogleApiClien
         mLongi = (EditText)findViewById(R.id.post_longi);
         mDesc = (EditText)findViewById(R.id.post_desc);
 
-        progressBar = (ProgressBar)findViewById(R.id.new_post_progress);
+//        progressBar = (ProgressBar)findViewById(R.id.new_post_progress);
 
         mSelectImage.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -145,6 +148,7 @@ public class NewPostActivity extends AppCompatActivity implements GoogleApiClien
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
+        AlertDialog dialog = new SpotsDialog(NewPostActivity.this);
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.postit) {
@@ -155,7 +159,8 @@ public class NewPostActivity extends AppCompatActivity implements GoogleApiClien
 
             if (!TextUtils.isEmpty(latitude) && !TextUtils.isEmpty(longitude) && !TextUtils.isEmpty(desc) && postImageUri != null){
 
-                progressBar.setVisibility(View.VISIBLE);
+//                progressBar.setVisibility(View.VISIBLE);
+                dialog.show();
 
                 String randomName = UUID.randomUUID().toString();
 
@@ -249,7 +254,8 @@ public class NewPostActivity extends AppCompatActivity implements GoogleApiClien
 
                                                 }
 
-                                                progressBar.setVisibility(View.INVISIBLE);
+//                                                progressBar.setVisibility(View.INVISIBLE);
+                                                dialog.dismiss();
 
                                             }
                                         });
@@ -267,7 +273,8 @@ public class NewPostActivity extends AppCompatActivity implements GoogleApiClien
                             String errMsg = task.getException().getMessage();
                             Toast.makeText(NewPostActivity.this, "Image Error " + errMsg, Toast.LENGTH_SHORT).show();
 
-                            progressBar.setVisibility(View.INVISIBLE);
+//                            progressBar.setVisibility(View.INVISIBLE);
+                            dialog.dismiss();
                         }
                     }
                 });

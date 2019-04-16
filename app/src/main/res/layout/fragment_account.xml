@@ -1,28 +1,104 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".Fragment.AccountFragment">
 
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
-
-
-        <Button
-            android:id="@+id/sign_out"
+        android:background="@color/grey"
+        android:orientation="horizontal">
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Sign Out" />
+            android:layout_height="405dp">
 
-        <Button
-            android:id="@+id/setup"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Setup Acc" />
+            <LinearLayout
+                android:id="@+id/lini"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/drawable_gradient_animation_list"
+                android:orientation="vertical">
+
+                <com.mikhaellopez.circularimageview.CircularImageView
+                    android:id="@+id/profile_image_view"
+                    android:layout_width="150dp"
+                    android:layout_height="150dp"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="25dp"
+                    app:civ_border_width="2dp"
+                    app:civ_border_color="@color/dasarpink"
+                    app:civ_shadow="true"
+                    app:civ_shadow_color="@color/colorPrimary"
+                    android:src="@drawable/profile_placeholder" />
+
+                <TextView
+                    android:id="@+id/username_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal|center_vertical"
+                    android:layout_marginTop="10dp"
+                    android:hint="..."
+                    android:paddingBottom="20dp"
+                    android:textColor="@android:color/white"
+                    android:textSize="21sp"
+                    android:textStyle="bold"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:orientation="horizontal"
+                    android:paddingBottom="10dp">
+
+                    <TextView
+                        android:id="@+id/email_view"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:hint="..."
+                        android:textColor="@android:color/white"
+                        />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/phone_view"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:hint="..."
+                        android:textColor="@android:color/white"
+                        />
+                </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingRight="10dp"
+                android:layout_marginVertical="@dimen/fab_margin"
+                >
+
+                <ImageView
+                    android:id="@+id/popup_acc"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end"
+                    android:src="@drawable/baseline_more_vert_white_24" />
+            </LinearLayout>
+
+
+            </LinearLayout>
+        </RelativeLayout>
+
     </LinearLayout>
 
 </FrameLayout>
