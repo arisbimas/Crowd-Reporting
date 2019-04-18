@@ -1,6 +1,11 @@
 package com.aris.crowdreporting;
 
+import android.Manifest;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomNavigationView;
@@ -23,6 +28,15 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.ittianyu.bottomnavigationviewex.BottomNavigationViewEx;
+import com.karumi.dexter.Dexter;
+import com.karumi.dexter.MultiplePermissionsReport;
+import com.karumi.dexter.PermissionToken;
+import com.karumi.dexter.listener.DexterError;
+import com.karumi.dexter.listener.PermissionRequest;
+import com.karumi.dexter.listener.PermissionRequestErrorListener;
+import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
+
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener {
 
@@ -40,6 +54,8 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        requestMultiplePermissions();
+
         main_toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(main_toolbar);
         getSupportActionBar().setTitle("Crowd Reporting");
@@ -50,7 +66,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
 
         if (mAuth.getCurrentUser() != null){
             // kita set default nya Home Fragment
-            loadFragment(new NearFragment());
+            loadFragment(new HomeFragment());
             // inisialisasi BottomNavigaionView
             BottomNavigationView bottomNavigationView = findViewById(R.id.button_navigation);
             // beri listener pada saat item/menu bottomnavigation terpilih
@@ -165,6 +181,69 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         }
         return loadFragment(fragment);
     }
+
+    //runtime permission method
+
+    private void  requestMultiplePermissions(){
+        Dexter.withActivity(this)
+                .withPermissions(
+                        Manifest.permission.ACCESS_FINE_LOCATION,
+                        Manifest.permission.ACCESS_COARSE_LOCATION )
+                .withListener(new MultiplePermissionsListener() {
+                    @Override
+                    public void onPermissionsChecked(MultiplePermissionsReport report) {
+                        // check if all permissions are granted
+                        if (report.areAllPermissionsGranted()) {
+//                            Toast.makeText(getApplicationContext(), "All permissions are granted by user!", Toast.LENGTH_SHORT).show();
+                        }
+
+                        // check for permanent denial of any permission
+                        if (report.isAnyPermissionPermanentlyDenied()) {
+                            // show alert dialog navigating to Settings
+                            openSettingsDialog();
+                        }
+                    }
+
+                    @Override
+                    public void onPermissionRationaleShouldBeShown(List<PermissionRequest> permissions, PermissionToken token) {
+                        token.continuePermissionRequest();
+                    }
+                }).
+                withErrorListener(new PermissionRequestErrorListener() {
+                    @Override
+                    public void onError(DexterError error) {
+                        Toast.makeText(getApplicationContext(), "Some Error! ", Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .onSameThread()
+                .check();
+    }
+
+    private void openSettingsDialog() {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(getApplicationContext());
+        builder.setTitle("Required Permissions");
+        builder.setMessage("This app require permission to use awesome feature. Grant them in app settings.");
+        builder.setPositiveButton("Take Me To SETTINGS", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+                Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                Uri uri = Uri.fromParts("package", getPackageName(), null);
+                intent.setData(uri);
+                startActivityForResult(intent, 101);
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+        builder.show();
+
+    }
+
 
 
 }

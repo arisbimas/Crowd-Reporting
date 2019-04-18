@@ -201,6 +201,26 @@ public class BlogRecyclerAdapter extends RecyclerView.Adapter<BlogRecyclerAdapte
             }
         });
 
+        //Get Comments Count
+        firebaseFirestore.collection("Posts/" + blogPostId + "/Comments").addSnapshotListener((Activity) context, new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
+
+                if(!documentSnapshots.isEmpty()){
+
+                    int count = documentSnapshots.size();
+
+                    holder.updateCommentsCount(count);
+
+                } else {
+
+                    holder.updateCommentsCount(0);
+
+                }
+
+            }
+        });
+
 //        holder.deleteBtn.setOnClickListener(new View.OnClickListener() {
 //            @Override
 //            public void onClick(View v) {
@@ -303,7 +323,14 @@ public class BlogRecyclerAdapter extends RecyclerView.Adapter<BlogRecyclerAdapte
         public void updateLikesCount(int count){
 
             blogLikeCount = mView.findViewById(R.id.like_count);
-            blogLikeCount.setText(count + " Likes");
+            blogLikeCount.setText(count +"");
+
+        }
+
+        public void updateCommentsCount(int count){
+
+            blogLikeCount = mView.findViewById(R.id.comment_count);
+            blogLikeCount.setText(count +"");
 
         }
 

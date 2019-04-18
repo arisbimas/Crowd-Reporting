@@ -33,7 +33,7 @@ class MapsActivity extends AppCompatActivity implements OnMapReadyCallback, View
 
     private Button btnRequestDirection;
     private GoogleMap googleMap;
-    private String serverKey = "AIzaSyBZPo1EqljM6CoMhEF9KlEdSRXs4ZUej2g";
+    private String serverKey = "AIzaSyBfrkZXKYufFH2V-f-5HbO748pa-IQoW-U";
 //    private LatLng origin = new LatLng(37.7849569, -122.4068855);
 //    private LatLng destination = new LatLng(37.7814432, -122.4460177);
 
@@ -120,8 +120,8 @@ class MapsActivity extends AppCompatActivity implements OnMapReadyCallback, View
             LatLng origin = new LatLng(lat_a, long_a);
             LatLng destination = new LatLng(lat_b, long_b);
             Route route = direction.getRouteList().get(0);
-            googleMap.addMarker(new MarkerOptions().position(origin).title("Lokasi Anda"));
-            googleMap.addMarker(new MarkerOptions().position(destination).title("Lokasi Kejadian"));
+//            googleMap.addMarker(new MarkerOptions().position(origin).title("Lokasi Anda"));
+//            googleMap.addMarker(new MarkerOptions().position(destination).title("Lokasi Kejadian"));
 
             ArrayList<LatLng> directionPositionList = route.getLegList().get(0).getDirectionPoint();
             googleMap.addPolyline(DirectionConverter.createPolyline(this, directionPositionList, 5, Color.RED));

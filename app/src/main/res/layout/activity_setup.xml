@@ -17,7 +17,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="10dp"
             android:layout_marginStart="15dp"
             android:elevation="10dp"
             app:cardBackgroundColor="#fcfcfc"
@@ -36,14 +36,13 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_marginBottom="50sp"
+                    android:layout_marginBottom="30sp"
                     android:fontFamily="@font/pacifico_regular"
-                    android:text="-Setup Account-"
+                    android:text="-Edit Account-"
                     android:textAlignment="center"
                     android:textAllCaps="false"
                     android:textColor="@color/colorPrimaryDark"
-                    android:textSize="20sp"
-                    android:textStyle="italic" />
+                    android:textSize="20sp"/>
 
                 <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/setup_image"
@@ -56,14 +55,29 @@
                     tools:ignore="ContentDescription" />
 
 
-
-
                 <android.support.design.widget.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="20dp"
                     android:layout_marginRight="20dp"
-                    android:layout_marginBottom="50dp">
+                    android:visibility="gone">
+
+                    <EditText
+                        android:id="@+id/setup_email"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:drawableLeft="@mipmap/icon_email"
+                        android:drawableTint="#FF4081"
+                        android:hint="Your Email.."
+                        android:singleLine="true"
+                        android:editable="false"
+                        android:visibility="gone"/>
+                </android.support.design.widget.TextInputLayout>
+                <android.support.design.widget.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginRight="20dp">
 
                     <EditText
                         android:id="@+id/setup_name"
@@ -72,7 +86,25 @@
                         android:drawableLeft="@mipmap/account"
                         android:drawableTint="#FF4081"
                         android:hint="Your Name.."
-                        android:singleLine="true" />
+                        android:singleLine="true"
+                        android:inputType="textCapWords"/>
+                </android.support.design.widget.TextInputLayout>
+                <android.support.design.widget.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginRight="20dp"
+                    android:layout_marginBottom="50dp">
+
+                    <EditText
+                        android:id="@+id/setup_phone"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:drawableLeft="@mipmap/icon_phone"
+                        android:drawableTint="#FF4081"
+                        android:hint="Your Phone Number.."
+                        android:singleLine="true"
+                        android:inputType="phone"/>
                 </android.support.design.widget.TextInputLayout>
 
             </LinearLayout>
@@ -91,19 +123,20 @@
         android:elevation="15dp" />
 
 
-    <ProgressBar
-        android:id="@+id/progressBar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginStart="0dp"
-        android:layout_marginTop="0dp"
-        android:layout_marginEnd="0dp"
-        android:layout_marginBottom="0dp"
-        android:indeterminate="true"
-        android:visibility="invisible"
-        tools:ignore="MissingConstraints"
-        style="?android:attr/progressBarStyleHorizontal"/>
+    <!--<ProgressBar-->
+        <!--android:id="@+id/progressBar"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_alignParentTop="true"-->
+        <!--android:layout_centerHorizontal="true"-->
+        <!--android:layout_marginStart="0dp"-->
+        <!--android:layout_marginTop="0dp"-->
+        <!--android:layout_marginEnd="0dp"-->
+        <!--android:layout_marginBottom="0dp"-->
+        <!--android:indeterminate="true"-->
+        <!--android:visibility="invisible"-->
+        <!--tools:ignore="MissingConstraints"-->
+        <!--style="?android:attr/progressBarStyleHorizontal"/>-->
+
 
 </RelativeLayout>

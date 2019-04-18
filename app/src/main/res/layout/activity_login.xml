@@ -5,7 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/bg_login1"
-    tools:context=".LoginActivity">
+    tools:context=".LoginActivity"
+    android:id="@+id/relative">
 
     <RelativeLayout
         android:id="@+id/relative1"
@@ -108,17 +109,47 @@
         android:background="@mipmap/check_circle"
         android:elevation="15dp" />
 
-    <Button
-        android:id="@+id/btn_signup"
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="20dp"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:text="Don't Have Acc? Register!"
-        android:textAllCaps="false"
-        android:background="@drawable/background_rounded1"
-        android:textColor="@android:color/white"/>
+        android:layout_below="@+id/relative1"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="20dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="OR"
+            android:textColor="@android:color/white"
+            android:textStyle="bold"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="20dp"/>
+
+        <com.google.android.gms.common.SignInButton
+            android:id="@+id/sign_in_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_gravity="center_horizontal"
+            android:layout_margin="20dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="20dp" />
+
+        <Button
+            android:id="@+id/btn_signup"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="20dp"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:text="Don't Have Acc? Register!"
+            android:textAllCaps="false"
+            android:background="@drawable/background_rounded1"
+            android:textColor="@android:color/white"/>
+    </RelativeLayout>
+
+
 
     <ProgressBar
         android:id="@+id/progressBar"

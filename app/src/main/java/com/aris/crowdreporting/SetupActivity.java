@@ -2,6 +2,7 @@ package com.aris.crowdreporting;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -42,16 +43,18 @@ import java.util.HashMap;
 import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import dmax.dialog.SpotsDialog;
 
 public class SetupActivity extends AppCompatActivity {
 
     private CircleImageView setupImage;
     private Uri mainImageUri;
 
-    private EditText setupName;
+    private EditText setupName, setupEmail, setupPhone;
     private ImageButton setupBtn;
     private ProgressBar setupProgress;
     private String user_id;
+    private String emailuser_id;
 
     private boolean is_Changed = false;
 
@@ -69,14 +72,19 @@ public class SetupActivity extends AppCompatActivity {
         storageReference = FirebaseStorage.getInstance().getReference();
 
         user_id = firebaseAuth.getCurrentUser().getUid();
+        emailuser_id = firebaseAuth.getCurrentUser().getEmail();
 
         setupImage =  findViewById(R.id.setup_image);
         setupName = (EditText)findViewById(R.id.setup_name);
+        setupEmail = (EditText)findViewById(R.id.setup_email);
+        setupPhone = (EditText)findViewById(R.id.setup_phone);
         setupBtn = (ImageButton) findViewById(R.id.btn_setup);
-        setupProgress = (ProgressBar)findViewById(R.id.progressBar);
+//        setupProgress = (ProgressBar)findViewById(R.id.progressBar);
 
+//        setupProgress.setVisibility(View.VISIBLE);
+        AlertDialog dialog = new SpotsDialog(SetupActivity.this);
+        dialog.show();
 
-        setupProgress.setVisibility(View.VISIBLE);
         setupBtn.setEnabled(false);
         firebaseFirestore.collection("Users").document(user_id).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
@@ -87,11 +95,13 @@ public class SetupActivity extends AppCompatActivity {
                     if (task.getResult().exists()){
 
                         String name = task.getResult().getString("name");
+                        String phone = task.getResult().getString("phone");
                         String image = task.getResult().getString("image");
 
                         mainImageUri = Uri.parse(image);
-
                         setupName.setText(name);
+                        setupEmail.setText(emailuser_id);
+                        setupPhone.setText(phone);
 
                         RequestOptions placeholderReq = new RequestOptions();
                         placeholderReq.placeholder(R.drawable.defaultimage);
@@ -105,7 +115,8 @@ public class SetupActivity extends AppCompatActivity {
                     Toast.makeText(SetupActivity.this, ""+ errMSg, Toast.LENGTH_SHORT).show();
 
                 }
-                setupProgress.setVisibility(View.INVISIBLE);
+//                setupProgress.setVisibility(View.INVISIBLE);
+                dialog.dismiss();
                 setupBtn.setEnabled(true);
 
             }
@@ -117,9 +128,12 @@ public class SetupActivity extends AppCompatActivity {
             public void onClick(View v) {
 
                 final String username = setupName.getText().toString();
+                final String phone = setupPhone.getText().toString();
 
                 if (!TextUtils.isEmpty(username) && mainImageUri != null) {
-                    setupProgress.setVisibility(View.VISIBLE);
+//                    setupProgress.setVisibility(View.VISIBLE);
+                    dialog.show();
+
 
                     if(is_Changed) {
 
@@ -143,21 +157,22 @@ public class SetupActivity extends AppCompatActivity {
                             public void onComplete(@NonNull Task<Uri> task) {
                                 if (task.isSuccessful()) {
 
-                                    storeFirestore(task, username);
+                                    storeFirestore(task, username, emailuser_id, phone);
 
                                 } else {
 
                                     String errMsg = task.getException().getMessage();
                                     Toast.makeText(SetupActivity.this, "Image Error " + errMsg, Toast.LENGTH_SHORT).show();
 
-                                    setupProgress.setVisibility(View.INVISIBLE);
+//                                    setupProgress.setVisibility(View.INVISIBLE);
+                                    dialog.dismiss();
                                 }
                             }
                         });
 
                     }else {
 
-                        storeFirestore(null, username);
+                        storeFirestore(null, username, emailuser_id, phone);
 
                     }
                 } else {
@@ -189,7 +204,9 @@ public class SetupActivity extends AppCompatActivity {
 
     }
 
-    private void storeFirestore(@NonNull Task<Uri> task, String username) {
+    private void storeFirestore(@NonNull Task<Uri> task, String username, String emailuser_id, String phone) {
+
+        AlertDialog dialog = new SpotsDialog(SetupActivity.this);
 
         Uri downloadUri;
 
@@ -205,6 +222,8 @@ public class SetupActivity extends AppCompatActivity {
 
         Map<String, String> userMap = new HashMap<>();
         userMap.put("name" , username);
+        userMap.put("email" , emailuser_id);
+        userMap.put("phone" , phone);
         userMap.put("image", downloadUri.toString());
 
         firebaseFirestore.collection("Users").document(user_id).set(userMap).addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -213,7 +232,9 @@ public class SetupActivity extends AppCompatActivity {
 
                 if (task.isSuccessful()){
 
-                    setupProgress.setVisibility(View.INVISIBLE);
+//                    setupProgress.setVisibility(View.INVISIBLE);
+                    dialog.show();
+
                     Toast.makeText(SetupActivity.this, "The User Setting are Updated", Toast.LENGTH_SHORT).show();
                     Intent intent = new Intent(SetupActivity.this, MainActivity.class);
                     startActivity(intent);
@@ -225,7 +246,8 @@ public class SetupActivity extends AppCompatActivity {
                     Toast.makeText(SetupActivity.this, ""+ errMSg, Toast.LENGTH_SHORT).show();
 
                 }
-                setupProgress.setVisibility(View.INVISIBLE);
+//                setupProgress.setVisibility(View.INVISIBLE);
+                dialog.dismiss();
 
             }
         });
