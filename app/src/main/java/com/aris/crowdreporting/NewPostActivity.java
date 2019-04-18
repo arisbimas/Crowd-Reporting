@@ -3,6 +3,7 @@ package com.aris.crowdreporting;
 import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
@@ -91,7 +92,7 @@ public class NewPostActivity extends AppCompatActivity implements GoogleApiClien
     private final static int REQUEST_CHECK_SETTINGS_GPS=0x1;
     private final static int REQUEST_ID_MULTIPLE_PERMISSIONS=0x2;
 
-
+    private AlertDialog dialog;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -116,6 +117,8 @@ public class NewPostActivity extends AppCompatActivity implements GoogleApiClien
         mDesc = (EditText)findViewById(R.id.post_desc);
 
 //        progressBar = (ProgressBar)findViewById(R.id.new_post_progress);
+        dialog = new SpotsDialog(NewPostActivity.this, "Track Your Location");
+
 
         mSelectImage.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -280,13 +283,13 @@ public class NewPostActivity extends AppCompatActivity implements GoogleApiClien
                 });
 
             } else if (TextUtils.isEmpty(latitude)){
-                Toast.makeText(NewPostActivity.this, "Latitude kosong", Toast.LENGTH_SHORT).show();
+                Toast.makeText(NewPostActivity.this, "Lokasi Tidak Terditeksi", Toast.LENGTH_SHORT).show();
             } else if (TextUtils.isEmpty(longitude)){
-                Toast.makeText(NewPostActivity.this, "Longitude kosong", Toast.LENGTH_SHORT).show();
+                Toast.makeText(NewPostActivity.this, "Lokasi Tidak Terditeksi", Toast.LENGTH_SHORT).show();
             } else if (TextUtils.isEmpty(desc)){
-                Toast.makeText(NewPostActivity.this, "Desc kosong", Toast.LENGTH_SHORT).show();
+                Toast.makeText(NewPostActivity.this, "Deskripsi harus diisi!", Toast.LENGTH_SHORT).show();
             } else if (postImageUri == null){
-                Toast.makeText(NewPostActivity.this, "Gambar kosong", Toast.LENGTH_SHORT).show();
+                Toast.makeText(NewPostActivity.this, "Harus disertakan Foto", Toast.LENGTH_SHORT).show();
             }
 
             return true;
@@ -303,6 +306,8 @@ public class NewPostActivity extends AppCompatActivity implements GoogleApiClien
                 .addApi(LocationServices.API)
                 .build();
         googleApiClient.connect();
+
+        dialog.show();
     }
 
     @Override
@@ -314,6 +319,8 @@ public class NewPostActivity extends AppCompatActivity implements GoogleApiClien
             mLati.setText(""+latitude);
             mLongi.setText(""+longitude);
             //Or Do whatever you want with your location
+            dialog.dismiss();
+
         }
     }
 
@@ -452,5 +459,12 @@ public class NewPostActivity extends AppCompatActivity implements GoogleApiClien
         }
     }
 
+    @Override
+    public void onStop() {
+        super.onStop();
+        if (googleApiClient.isConnected()) {
+            googleApiClient.disconnect();
+        }
+    }
 
 }

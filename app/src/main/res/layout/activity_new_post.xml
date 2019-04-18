@@ -43,7 +43,9 @@
                 android:adjustViewBounds="true"
                 android:background="@android:color/white"
                 android:scaleType="centerCrop"
-                android:src="@mipmap/add_btn"></ImageButton>
+                android:src="@mipmap/add_btn">
+
+            </ImageButton>
 
             <EditText
                 android:id="@+id/post_lati"
@@ -58,7 +60,7 @@
                 android:hint="Latitude"
                 android:inputType="text"
                 android:padding="15dp"
-                android:visibility="visible" />
+                android:visibility="gone" />
 
             <EditText
                 android:id="@+id/post_longi"
@@ -73,18 +75,26 @@
                 android:hint="Longitude"
                 android:inputType="text"
                 android:padding="15dp"
-                android:visibility="visible" />
+                android:visibility="gone" />
 
-            <EditText
-                android:id="@+id/post_desc"
+
+            <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                app:counterEnabled="true"
+                app:counterMaxLength="140"
                 android:layout_below="@+id/post_longi"
-                android:layout_margin="20dp"
-                android:background="@drawable/inp_outline"
-                android:hint="@string/hint_post_desc"
-                android:inputType="text"
-                android:padding="15dp" />
+                android:layout_margin="20dp">
+
+                <EditText
+                    android:id="@+id/post_desc"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/hint_post_desc"
+                    android:padding="20dp"
+                    android:maxLength="140"/>
+
+            </android.support.design.widget.TextInputLayout>
 
         </RelativeLayout>
     </ScrollView>

@@ -7,11 +7,14 @@ import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.text.format.DateFormat;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -82,10 +85,10 @@ public class BlogRecyclerAdapter extends RecyclerView.Adapter<BlogRecyclerAdapte
 
         String user_id = blog_list.get(position).getUser_id();
 
-        if (user_id.equals(currentUserId)){
-            holder.deleteBtn.setEnabled(true);
-            holder.deleteBtn.setVisibility(View.VISIBLE);
-        }
+//        if (user_id.equals(currentUserId)){
+//            holder.deleteBtn.setEnabled(true);
+//            holder.deleteBtn.setVisibility(View.VISIBLE);
+//        }
 
         //User Data will be retrieved here...
         firebaseFirestore.collection("Users").document(user_id)
@@ -240,6 +243,33 @@ public class BlogRecyclerAdapter extends RecyclerView.Adapter<BlogRecyclerAdapte
 //            }
 //        });
 
+
+        //POPUP
+        holder.popUpHome.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                PopupMenu popupMenu =  new PopupMenu(context, holder.popUpHome, Gravity.CENTER, 0, R.style.PopupMenuMoreCentralized);
+                popupMenu.setGravity(Gravity.CENTER);
+
+                popupMenu.getMenuInflater().inflate(R.menu.popup_menu_home, popupMenu.getMenu());
+                popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+                        switch (item.getItemId()) {
+                            case R.id.report:
+                                Toast.makeText(context, "Dilaporkan", Toast.LENGTH_SHORT).show();
+                                return true;
+                            default:
+                                return false;
+                        }
+                    }
+                });
+                popupMenu.show();
+
+            }
+        });
+
     }
 
 
@@ -259,7 +289,7 @@ public class BlogRecyclerAdapter extends RecyclerView.Adapter<BlogRecyclerAdapte
         private TextView blogUserName;
         private CircularImageView blogUserImage;
 
-        private ImageView blogLikeBtn;
+        private ImageView blogLikeBtn, popUpHome;
         private TextView blogLikeCount;
 
         private ImageView blogCommentBtn;
@@ -273,7 +303,8 @@ public class BlogRecyclerAdapter extends RecyclerView.Adapter<BlogRecyclerAdapte
 
             blogLikeBtn = mView.findViewById(R.id.btn_like);
             blogCommentBtn = mView.findViewById(R.id.btn_comment);
-            deleteBtn = mView.findViewById(R.id.btn_delete);
+//            deleteBtn = mView.findViewById(R.id.btn_delete);
+            popUpHome = mView.findViewById(R.id.popup_home);
             blogUserName = mView.findViewById(R.id.blog_username);
             blogUserImage = mView.findViewById(R.id.blog_user_image);
 

@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/grey"
-        android:orientation="horizontal">
+        android:orientation="vertical">
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="405dp">
@@ -28,8 +28,8 @@
                     android:layout_height="150dp"
                     android:layout_gravity="center_horizontal"
                     android:layout_marginTop="25dp"
-                    app:civ_border_width="2dp"
-                    app:civ_border_color="@color/dasarpink"
+                    app:civ_border_width="1dp"
+                    app:civ_border_color="@android:color/white"
                     app:civ_shadow="true"
                     app:civ_shadow_color="@color/colorPrimary"
                     android:src="@drawable/profile_placeholder" />
@@ -99,6 +99,12 @@
             </LinearLayout>
         </RelativeLayout>
 
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/test1"
+            android:background="@color/colorAccent"
+            android:text="TEST"/>
     </LinearLayout>
 
 </FrameLayout>

@@ -335,6 +335,7 @@ public class NearFragment extends Fragment implements GoogleApiClient.Connection
 
             dialog.dismiss();
             nearRecyclerAdapter.notifyDataSetChanged();
+
         }
     }
 
@@ -458,6 +459,8 @@ public class NearFragment extends Fragment implements GoogleApiClient.Connection
             getMyLocation();
         }
     }
+
+
 
 
 }

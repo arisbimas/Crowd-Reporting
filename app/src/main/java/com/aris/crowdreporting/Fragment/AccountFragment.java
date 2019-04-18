@@ -1,14 +1,19 @@
 package com.aris.crowdreporting.Fragment;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.drawable.AnimationDrawable;
+import android.location.Location;
+import android.location.LocationListener;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -26,6 +31,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.aris.crowdreporting.LoginActivity;
+import com.aris.crowdreporting.MainActivity;
 import com.aris.crowdreporting.R;
 import com.aris.crowdreporting.SetupActivity;
 import com.bumptech.glide.Glide;
@@ -36,8 +42,13 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.LocationSettingsRequest;
+import com.google.android.gms.location.LocationSettingsResult;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -48,7 +59,8 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.mikhaellopez.circularimageview.CircularImageView;
 
-public class AccountFragment extends DialogFragment implements GoogleApiClient.OnConnectionFailedListener {
+public class AccountFragment extends DialogFragment implements
+        GoogleApiClient.OnConnectionFailedListener {
 
     private CircularImageView profileImageV;
     private TextView usernameV, emailV, phoneV;
@@ -63,6 +75,11 @@ public class AccountFragment extends DialogFragment implements GoogleApiClient.O
 
     private FirebaseAuth.AuthStateListener mAuthListener;
     private GoogleApiClient mGoogleApiClient;
+
+    private Location mylocation;
+    private GoogleApiClient googleApiClient;
+    private final static int REQUEST_CHECK_SETTINGS_GPS=0x1;
+    private final static int REQUEST_ID_MULTIPLE_PERMISSIONS=0x2;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -188,6 +205,8 @@ public class AccountFragment extends DialogFragment implements GoogleApiClient.O
                 new ResultCallback<Status>() {
                     @Override
                     public void onResult(Status status) {
+                        mGoogleApiClient.disconnect();
+                        mGoogleApiClient.connect();
                         // [START_EXCLUDE]
                         firebaseAuth.getInstance().signOut();
                         Intent i = new Intent(getActivity(),
@@ -206,4 +225,6 @@ public class AccountFragment extends DialogFragment implements GoogleApiClient.O
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
 
     }
+
+
 }
