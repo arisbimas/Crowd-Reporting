@@ -185,7 +185,7 @@ public class BlogRecyclerAdapter extends RecyclerView.Adapter<BlogRecyclerAdapte
                         } else {
 
                             firebaseFirestore.collection("Posts/" + blogPostId + "/Likes").document(currentUserId).delete();
-
+                            //coba
                         }
 
                     }
