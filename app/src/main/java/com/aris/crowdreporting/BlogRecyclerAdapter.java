@@ -132,6 +132,11 @@ public class BlogRecyclerAdapter extends RecyclerView.Adapter<BlogRecyclerAdapte
             @Override
             public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
 
+                if (e != null) {
+                    Log.w(TAG, "listen:error", e);
+                    return;
+                }
+
                 if(!documentSnapshots.isEmpty()){
 
                     int count = documentSnapshots.size();

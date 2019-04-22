@@ -10,10 +10,13 @@ import android.location.LocationListener;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -30,8 +33,10 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.aris.crowdreporting.Blog;
 import com.aris.crowdreporting.LoginActivity;
 import com.aris.crowdreporting.MainActivity;
+import com.aris.crowdreporting.MyPhotoRecyclerAdapter;
 import com.aris.crowdreporting.R;
 import com.aris.crowdreporting.SetupActivity;
 import com.bumptech.glide.Glide;
@@ -53,14 +58,28 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.mikhaellopez.circularimageview.CircularImageView;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.annotation.Nullable;
+
+import static android.support.constraint.Constraints.TAG;
+
 public class AccountFragment extends DialogFragment implements
         GoogleApiClient.OnConnectionFailedListener {
+
+    private final static String TAG = "PROFILE_ACTIVITY";
 
     private CircularImageView profileImageV;
     private TextView usernameV, emailV, phoneV;
@@ -75,6 +94,10 @@ public class AccountFragment extends DialogFragment implements
 
     private FirebaseAuth.AuthStateListener mAuthListener;
     private GoogleApiClient mGoogleApiClient;
+
+    private RecyclerView profileBlogListView;
+    private List<Blog> blog_list;
+    private MyPhotoRecyclerAdapter profileBlogRecyclerAdapter;
 
     private Location mylocation;
     private GoogleApiClient googleApiClient;
@@ -104,6 +127,95 @@ public class AccountFragment extends DialogFragment implements
 
         ImageView popup = view.findViewById(R.id.popup_acc);
 
+        firebaseAuth = FirebaseAuth.getInstance();
+        firebaseFirestore = FirebaseFirestore.getInstance();
+        storageReference = FirebaseStorage.getInstance().getReference();
+
+        user_id = firebaseAuth.getCurrentUser().getUid();
+        emailuser_id = firebaseAuth.getCurrentUser().getEmail();
+
+        profileImageV =  (CircularImageView)view.findViewById(R.id.profile_image_view);
+        usernameV = (TextView)view.findViewById(R.id.username_view);
+        emailV = (TextView)view.findViewById(R.id.email_view);
+        phoneV = (TextView)view.findViewById(R.id.phone_view);
+
+        //USERNYA SIAPA
+        firebaseFirestore.collection("Users").document(user_id).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+
+                if (task.isSuccessful()){
+
+                    if (task.getResult().exists()){
+
+                        String name = task.getResult().getString("name");
+                        String image = task.getResult().getString("image");
+                        String emailku = task.getResult().getString("email");
+                        String phoneku = task.getResult().getString("phone");
+
+                        mainImageUri = Uri.parse(image);
+                        usernameV.setText(""+name);
+                        emailV.setText(""+emailku);
+                        phoneV.setText(""+phoneku);
+
+                        RequestOptions placeholderReq = new RequestOptions();
+                        placeholderReq.placeholder(R.drawable.defaultimage);
+                        Glide.with(getContext()).setDefaultRequestOptions(placeholderReq).load(image).into(profileImageV);
+
+                    }
+
+                } else {
+
+                    String errMSg = task.getException().getMessage();
+                    Toast.makeText(getContext(), ""+ errMSg, Toast.LENGTH_SHORT).show();
+
+                }
+
+            }
+        });
+
+        //PHOTO POST USERNYA
+        ///Recyclerview
+        blog_list = new ArrayList<>();
+        profileBlogListView = view.findViewById(R.id.rv_images);
+        profileBlogRecyclerAdapter = new MyPhotoRecyclerAdapter(getContext(),blog_list);
+        profileBlogListView.setLayoutManager(new GridLayoutManager(getContext(),3));
+        profileBlogListView.setAdapter(profileBlogRecyclerAdapter);
+
+        Query firstQuery = firebaseFirestore.collection("Posts")
+                .orderBy("timestamp", Query.Direction.DESCENDING)
+                .whereEqualTo("user_id", user_id);
+        firstQuery.addSnapshotListener(getActivity(), new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
+
+                if (e != null) {
+                    Log.w(TAG, "listen:error", e);
+                    return;
+                }
+
+                if (!documentSnapshots.isEmpty()) {
+
+                    for (DocumentChange doc : documentSnapshots.getDocumentChanges()) {
+
+                        if (doc.getType() == DocumentChange.Type.ADDED) {
+
+                            String blogPostId = doc.getDocument().getId();
+                            Blog blogPost = doc.getDocument().toObject(Blog.class).withId(blogPostId);
+                            blog_list.add(blogPost);
+                            profileBlogRecyclerAdapter.notifyDataSetChanged();
+
+                        }
+                    }
+
+                }
+
+            }
+
+        });
+
+
+        //POPUP
         popup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -129,52 +241,6 @@ public class AccountFragment extends DialogFragment implements
                 });
 
                 popupMenu.show();
-            }
-        });
-
-        firebaseAuth = FirebaseAuth.getInstance();
-        firebaseFirestore = FirebaseFirestore.getInstance();
-        storageReference = FirebaseStorage.getInstance().getReference();
-
-        user_id = firebaseAuth.getCurrentUser().getUid();
-        emailuser_id = firebaseAuth.getCurrentUser().getEmail();
-
-        profileImageV =  (CircularImageView)view.findViewById(R.id.profile_image_view);
-        usernameV = (TextView)view.findViewById(R.id.username_view);
-        emailV = (TextView)view.findViewById(R.id.email_view);
-        phoneV = (TextView)view.findViewById(R.id.phone_view);
-
-        firebaseFirestore.collection("Users").document(user_id).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-
-                if (task.isSuccessful()){
-
-                    if (task.getResult().exists()){
-
-                        String name = task.getResult().getString("name");
-                        String image = task.getResult().getString("image");
-                        String emailku = task.getResult().getString("email");
-                        String phoneku = task.getResult().getString("phone");
-
-                        mainImageUri = Uri.parse(image);
-                        usernameV.setText(""+name);
-                        emailV.setText(""+emailku);
-                        phoneV.setText(""+phoneku);
-
-                        RequestOptions placeholderReq = new RequestOptions();
-                        placeholderReq.placeholder(R.drawable.defaultimage);
-                        Glide.with(getActivity()).setDefaultRequestOptions(placeholderReq).load(image).into(profileImageV);
-
-                    }
-
-                } else {
-
-                    String errMSg = task.getException().getMessage();
-                    Toast.makeText(getContext(), ""+ errMSg, Toast.LENGTH_SHORT).show();
-
-                }
-
             }
         });
 

@@ -30,7 +30,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".CheckLoc.CheckLoc"></activity>
+        <activity android:name=".DetailActivity"></activity>
+        <activity android:name=".CheckLoc.CheckLoc" />
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
              (See the file "res/values/google_maps_api.xml").
@@ -46,23 +47,27 @@
         <activity
             android:name=".MapsActivity"
             android:label="@string/title_activity_maps"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait" />
         <activity
             android:name=".NewPostActivity"
             android:parentActivityName=".MainActivity"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait" />
         <activity
             android:name=".CommentsActivity"
             android:parentActivityName=".MainActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".SetupActivity"/>
-        <activity android:name=".RegisterActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".MainActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".PostActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".LoginActivity"
+            android:screenOrientation="portrait" />
+        <activity android:name=".SetupActivity" />
+        <activity
+            android:name=".RegisterActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".MainActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".PostActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".LoginActivity"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
