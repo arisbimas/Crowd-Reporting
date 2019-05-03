@@ -241,6 +241,7 @@ public class NewPostActivity extends AppCompatActivity implements GoogleApiClien
                                         postMap.put("desc", des);
                                         postMap.put("user_id", current_user_id);
                                         postMap.put("timestamp", FieldValue.serverTimestamp());
+                                        postMap.put("reports", "false");
 
                                         firebaseFirestore.collection("Posts").add(postMap).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
                                             @Override

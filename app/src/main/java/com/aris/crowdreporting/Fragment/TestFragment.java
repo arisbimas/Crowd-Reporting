@@ -77,7 +77,7 @@ import javax.annotation.Nullable;
 
 import static android.support.constraint.Constraints.TAG;
 
-public class AccountFragment extends DialogFragment implements
+public class TestFragment extends DialogFragment implements
         GoogleApiClient.OnConnectionFailedListener {
 
     private final static String TAG = "PROFILE_ACTIVITY";
@@ -209,6 +209,8 @@ public class AccountFragment extends DialogFragment implements
                         }
                     }
 
+                } else {
+                    Log.d(TAG,  " data: null");
                 }
 
             }

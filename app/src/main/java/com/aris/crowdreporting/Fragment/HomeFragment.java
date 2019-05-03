@@ -1,5 +1,6 @@
 package com.aris.crowdreporting.Fragment;
 
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -48,6 +49,8 @@ public class HomeFragment extends Fragment {
     private DocumentSnapshot lastVisible;
     private Boolean isFirstPageFirstLoad = true;
 
+    private ProgressDialog progressDialog;
+    private String user_id;
     public HomeFragment() {
         // Required empty public constructor
     }
@@ -71,9 +74,14 @@ public class HomeFragment extends Fragment {
         blog_list_view.setAdapter(blogRecyclerAdapter);
         blog_list_view.setHasFixedSize(true);
 
+        progressDialog = new ProgressDialog(getContext());
+        progressDialog.setMessage("Loading..");
+        progressDialog.show();
+
         if(firebaseAuth.getCurrentUser() != null) {
 
             firebaseFirestore = FirebaseFirestore.getInstance();
+            user_id = firebaseAuth.getCurrentUser().getUid();
 
             blog_list_view.addOnScrollListener(new RecyclerView.OnScrollListener() {
                 @Override
@@ -91,7 +99,7 @@ public class HomeFragment extends Fragment {
                 }
             });
 
-            Query firstQuery = firebaseFirestore.collection("Posts")
+            Query firstQuery = firebaseFirestore.collection("Posts").whereEqualTo("reports", "false")
                     .orderBy("timestamp", Query.Direction.DESCENDING)
                     .limit(3);
             firstQuery.addSnapshotListener(getActivity(), new EventListener<QuerySnapshot>() {
@@ -116,6 +124,7 @@ public class HomeFragment extends Fragment {
 
                             if (doc.getType() == DocumentChange.Type.ADDED) {
 
+
                                 String blogPostId = doc.getDocument().getId();
                                 Blog blogPost = doc.getDocument().toObject(Blog.class).withId(blogPostId);
 
@@ -123,13 +132,16 @@ public class HomeFragment extends Fragment {
 
                                     blog_list.add(blogPost);
                                     blogRecyclerAdapter.notifyItemInserted(blog_list.size());
+                                    blogRecyclerAdapter.notifyDataSetChanged();
 
                                 } else {
 
                                     blog_list.add(0, blogPost);
                                     blogRecyclerAdapter.notifyItemInserted(0);
+                                    blogRecyclerAdapter.notifyDataSetChanged();
 
                                 }
+                                progressDialog.dismiss();
 
 
                             }
@@ -153,7 +165,7 @@ public class HomeFragment extends Fragment {
 
         if(firebaseAuth.getCurrentUser() != null) {
 
-            Query nextQuery = firebaseFirestore.collection("Posts")
+            Query nextQuery = firebaseFirestore.collection("Posts").whereEqualTo("reports", "false")
                     .orderBy("timestamp", Query.Direction.DESCENDING)
                     .startAfter(lastVisible)
                     .limit(3);
@@ -179,6 +191,7 @@ public class HomeFragment extends Fragment {
                                 blog_list.add(blogPost);
 
                                 blogRecyclerAdapter.notifyItemInserted(blog_list.size());
+                                blogRecyclerAdapter.notifyDataSetChanged();
                             }
 
                         }

@@ -150,73 +150,7 @@ public class NearFragment extends Fragment implements GoogleApiClient.Connection
                 }
             });
 
-            Query firstQuery = firebaseFirestore.collection("Posts");
-            firstQuery.addSnapshotListener(getActivity(), new EventListener<QuerySnapshot>() {
-                @Override
-                public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
-
-                    if (!documentSnapshots.isEmpty()) {
-
-                        if (isFirstPageFirstLoad) {
-
-                            lastVisible = documentSnapshots.getDocuments().get(documentSnapshots.size() - 1);
-                            near_list.clear();
-
-                        }
-
-                        for (DocumentChange doc : documentSnapshots.getDocumentChanges()) {
-
-                            if (doc.getType() == DocumentChange.Type.ADDED) {
-
-                                String nearPostId = doc.getDocument().getId();
-                                Near nearPost = doc.getDocument().toObject(Near.class).withId(nearPostId);
-
-
-                                if (isFirstPageFirstLoad) {
-
-//                                    double lat = -6.252196;
-//                                    double lng = 107.002395;
-
-
-                                    if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-
-                                        return;
-                                    }
-                                    client.getLastLocation().addOnSuccessListener((Activity) getContext(), new OnSuccessListener<Location>() {
-                                        @Override
-                                        public void onSuccess(Location location) {
-
-                                            if (location != null) {
-
-                                                near_list.add(nearPost);
-
-
-                                                Double lat_a = location.getLatitude();
-                                                Double lng_a = location.getLongitude();
-
-                                                Collections.sort(near_list, new SortPlaces(lat_a, lng_a));
-                                                nearRecyclerAdapter.notifyDataSetChanged();
-                                            }
-                                        }
-                                    });
-
-                                } else {
-
-                                    near_list.add(0, nearPost);
-                                    nearRecyclerAdapter.notifyDataSetChanged();
-
-                                }
-
-                            }
-                        }
-
-                        isFirstPageFirstLoad = false;
-
-                    }
-
-                }
-
-            });
+            firstQuery();
 
         }
 
@@ -224,44 +158,114 @@ public class NearFragment extends Fragment implements GoogleApiClient.Connection
         return view;
     }
 
-    public void loadMorePost() {
+    private void firstQuery() {
+        Query firstQuery = firebaseFirestore.collection("Posts");
+        firstQuery.addSnapshotListener(getActivity(), new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
 
-        if (firebaseAuth.getCurrentUser() != null) {
+                if (!documentSnapshots.isEmpty()) {
 
-            Query nextQuery = firebaseFirestore.collection("Posts")
-
-                    .startAfter(lastVisible)
-                    .limit(5);
-
-            nextQuery.addSnapshotListener(getActivity(), new EventListener<QuerySnapshot>() {
-                @Override
-                public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
-
-                    if (!documentSnapshots.isEmpty()) {
+                    if (isFirstPageFirstLoad) {
 
                         lastVisible = documentSnapshots.getDocuments().get(documentSnapshots.size() - 1);
-                        for (DocumentChange doc : documentSnapshots.getDocumentChanges()) {
+                        near_list.clear();
 
-                            if (doc.getType() == DocumentChange.Type.ADDED) {
+                    }
 
-                                String nearPostId = doc.getDocument().getId();
-                                Near nearPost = doc.getDocument().toObject(Near.class).withId(nearPostId);
-                                String blogUserId = doc.getDocument().getString("user_id");
+                    for (DocumentChange doc : documentSnapshots.getDocumentChanges()) {
 
-                                nearRecyclerAdapter.notifyItemInserted(near_list.size());
+                        if (doc.getType() == DocumentChange.Type.ADDED) {
 
+                            String nearPostId = doc.getDocument().getId();
+                            Near nearPost = doc.getDocument().toObject(Near.class).withId(nearPostId);
+
+
+                            if (isFirstPageFirstLoad) {
+
+//                                    double lat = -6.252196;
+//                                    double lng = 107.002395;
+
+
+                                if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
+                                    return;
+                                }
+                                client.getLastLocation().addOnSuccessListener((Activity) getContext(), new OnSuccessListener<Location>() {
+                                    @Override
+                                    public void onSuccess(Location location) {
+
+                                        if (location != null) {
+
+                                            near_list.add(nearPost);
+
+
+                                            Double lat_a = location.getLatitude();
+                                            Double lng_a = location.getLongitude();
+
+                                            Collections.sort(near_list, new SortPlaces(lat_a, lng_a));
+                                            nearRecyclerAdapter.notifyDataSetChanged();
+                                        }
+                                    }
+                                });
+
+                            } else {
+
+                                near_list.add(0, nearPost);
+                                nearRecyclerAdapter.notifyDataSetChanged();
 
                             }
 
                         }
                     }
 
+                    isFirstPageFirstLoad = false;
+
                 }
-            });
 
-        }
+            }
 
+        });
     }
+
+//    public void loadMorePost() {
+//
+//        if (firebaseAuth.getCurrentUser() != null) {
+//
+//            Query nextQuery = firebaseFirestore.collection("Posts")
+//
+//                    .startAfter(lastVisible)
+//                    .limit(5);
+//
+//            nextQuery.addSnapshotListener(getActivity(), new EventListener<QuerySnapshot>() {
+//                @Override
+//                public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
+//
+//                    if (!documentSnapshots.isEmpty()) {
+//
+//                        lastVisible = documentSnapshots.getDocuments().get(documentSnapshots.size() - 1);
+//                        for (DocumentChange doc : documentSnapshots.getDocumentChanges()) {
+//
+//                            if (doc.getType() == DocumentChange.Type.ADDED) {
+//
+//                                String nearPostId = doc.getDocument().getId();
+//                                Near nearPost = doc.getDocument().toObject(Near.class).withId(nearPostId);
+//                                String blogUserId = doc.getDocument().getString("user_id");
+//
+//                                nearRecyclerAdapter.notifyItemInserted(near_list.size());
+//
+//
+//                            }
+//
+//                        }
+//                    }
+//
+//                }
+//            });
+//
+//        }
+//
+//    }
 
 
     @Override
@@ -332,10 +336,8 @@ public class NearFragment extends Fragment implements GoogleApiClient.Connection
         if (mylocation != null) {
             Double latitude = mylocation.getLatitude();
             Double longitude = mylocation.getLongitude();
-
-            dialog.dismiss();
             nearRecyclerAdapter.notifyDataSetChanged();
-
+            dialog.dismiss();
         }
     }
 

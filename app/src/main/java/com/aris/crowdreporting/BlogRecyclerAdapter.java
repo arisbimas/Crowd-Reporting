@@ -1,8 +1,12 @@
 package com.aris.crowdreporting;
 
 import android.app.Activity;
+import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.text.format.DateFormat;
@@ -30,12 +34,18 @@ import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.SetOptions;
 import com.mikhaellopez.circularimageview.CircularImageView;
 
+import java.lang.reflect.Array;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+
+import javax.annotation.Nullable;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -263,7 +273,23 @@ public class BlogRecyclerAdapter extends RecyclerView.Adapter<BlogRecyclerAdapte
                     public boolean onMenuItemClick(MenuItem item) {
                         switch (item.getItemId()) {
                             case R.id.report:
-                                Toast.makeText(context, "Dilaporkan", Toast.LENGTH_SHORT).show();
+
+                                //Lapor Feature
+                                firebaseFirestore.collection("Posts").document(blogPostId + "reports").get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                        if (!task.getResult().exists()){
+                                            Map<String, Object> reportsMap = new HashMap<>();
+                                            reportsMap.put("reports", "true");
+
+                                            firebaseFirestore.collection("Posts").document(blogPostId).set(reportsMap, SetOptions.merge());
+                                            Toast.makeText(context, "Thanks for repoting this post..", Toast.LENGTH_SHORT).show();
+                                        } else {
+                                            Toast.makeText(context, "Anda telah melaporkan post ini!", Toast.LENGTH_SHORT).show();
+                                        }
+                                    }
+                                });
+
                                 return true;
                             default:
                                 return false;
@@ -272,6 +298,27 @@ public class BlogRecyclerAdapter extends RecyclerView.Adapter<BlogRecyclerAdapte
                 });
                 popupMenu.show();
 
+            }
+        });
+
+        holder.blogImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(context, DetailActivity.class);
+                intent.putExtra("blog_id",blogPostId);
+                intent.putExtra("user_id",user_id);
+                intent.putExtra("imurl",image_url);
+
+                context.startActivity(intent);
+            }
+        });
+
+        holder.blogUserImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                holder.showDataPopUpProfile(blog_list.get(position).getUser_id());
+                holder.mDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                holder.mDialog.show();
             }
         });
 
@@ -289,9 +336,10 @@ public class BlogRecyclerAdapter extends RecyclerView.Adapter<BlogRecyclerAdapte
 
         private TextView descView;
         private ImageView blogImageView;
+        private CircularImageView popUpUserImage;
         private TextView blogDate;
 
-        private TextView blogUserName;
+        private TextView blogUserName, popUpUserName, popUpUserEmail, popUpUserPhone;
         private CircularImageView blogUserImage;
 
         private ImageView blogLikeBtn, popUpHome;
@@ -301,6 +349,7 @@ public class BlogRecyclerAdapter extends RecyclerView.Adapter<BlogRecyclerAdapte
 
         private Button deleteBtn;
 
+        private Dialog mDialog;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -312,6 +361,9 @@ public class BlogRecyclerAdapter extends RecyclerView.Adapter<BlogRecyclerAdapte
             popUpHome = mView.findViewById(R.id.popup_home);
             blogUserName = mView.findViewById(R.id.blog_username);
             blogUserImage = mView.findViewById(R.id.blog_user_image);
+
+            mDialog = new Dialog(context);
+            mDialog.setContentView(R.layout.popup_detail_profile);
 
         }
 
@@ -370,6 +422,29 @@ public class BlogRecyclerAdapter extends RecyclerView.Adapter<BlogRecyclerAdapte
 
         }
 
+        public void showDataPopUpProfile(String popupName){
+            popUpUserName = mDialog.findViewById(R.id.popup_username);
+            popUpUserEmail = mDialog.findViewById(R.id.popup_user_email);
+            popUpUserPhone = mDialog.findViewById(R.id.popup_user_phone);
+            popUpUserImage = mDialog.findViewById(R.id.popup_user_image);
+
+            firebaseFirestore.collection("Users").document(popupName).addSnapshotListener(new EventListener<DocumentSnapshot>() {
+                @Override
+                public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
+                    if (documentSnapshot.exists()){
+                        String popupusername = documentSnapshot.get("name").toString();
+                        String popupuseremail = documentSnapshot.get("email").toString();
+                        String popupuserphone = documentSnapshot.get("phone").toString();
+                        String popupuserimg = documentSnapshot.get("image").toString();
+
+                        popUpUserName.setText(popupusername);
+                        popUpUserEmail.setText(popupuseremail);
+                        popUpUserPhone.setText(popupuserphone);
+                        Glide.with(context).load(popupuserimg).into(popUpUserImage);
+                    }
+                }
+            });
+        }
     }
 
 }
