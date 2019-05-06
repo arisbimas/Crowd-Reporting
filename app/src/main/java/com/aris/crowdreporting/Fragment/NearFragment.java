@@ -59,6 +59,7 @@ import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -73,8 +74,10 @@ import com.theartofdev.edmodo.cropper.CropImage;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 
+import static android.support.constraint.Constraints.TAG;
 import static com.google.firebase.crash.FirebaseCrash.log;
 
 public class NearFragment extends Fragment implements GoogleApiClient.ConnectionCallbacks,
@@ -159,10 +162,33 @@ public class NearFragment extends Fragment implements GoogleApiClient.Connection
     }
 
     private void firstQuery() {
-        Query firstQuery = firebaseFirestore.collection("Posts");
+        //FORMAT bln/tgl/thn untuk firestore emg gitu
+        Date date = new Date();
+
+        //HARI INI
+        long secs = date.getTime();
+        Date cDate = new Date(secs);
+
+        //7 hari yg lalu
+        // 7hari yang lalu
+        long DAY_IN_MS = 1000 * 60 * 60 * 24;
+        long secs2 = date.getTime() - (7 * DAY_IN_MS);
+        Date daysAgo = new Date(secs2);
+
+        Toast.makeText(getActivity(), ""+daysAgo, Toast.LENGTH_SHORT).show();
+        Query firstQuery = firebaseFirestore.collection("Posts")
+                .whereEqualTo("reports", "false")
+                .whereLessThanOrEqualTo("timestamp", cDate)
+                .whereGreaterThanOrEqualTo("timestamp", daysAgo);
+
         firstQuery.addSnapshotListener(getActivity(), new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
+
+                if (e != null) {
+                    Log.w(TAG, "listen:error", e);
+                    return;
+                }
 
                 if (!documentSnapshots.isEmpty()) {
 
@@ -202,8 +228,14 @@ public class NearFragment extends Fragment implements GoogleApiClient.Connection
 
                                             Double lat_a = location.getLatitude();
                                             Double lng_a = location.getLongitude();
-
+//                                            Collections.sort(near_list, new Comparator<Near>() {
+//                                                @Override
+//                                                public int compare(Near o1, Near o2) {
+//                                                    return o1.getTimestamp().compareTo(o2.getTimestamp());
+//                                                }
+//                                            });
                                             Collections.sort(near_list, new SortPlaces(lat_a, lng_a));
+
                                             nearRecyclerAdapter.notifyDataSetChanged();
                                         }
                                     }

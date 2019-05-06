@@ -280,10 +280,13 @@ public class BlogRecyclerAdapter extends RecyclerView.Adapter<BlogRecyclerAdapte
                                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                                         if (!task.getResult().exists()){
                                             Map<String, Object> reportsMap = new HashMap<>();
+                                            reportsMap.put("desc", "");
                                             reportsMap.put("reports", "true");
 
                                             firebaseFirestore.collection("Posts").document(blogPostId).set(reportsMap, SetOptions.merge());
                                             Toast.makeText(context, "Thanks for repoting this post..", Toast.LENGTH_SHORT).show();
+                                            holder.hideItem.setVisibility(View.VISIBLE);
+                                            
                                         } else {
                                             Toast.makeText(context, "Anda telah melaporkan post ini!", Toast.LENGTH_SHORT).show();
                                         }
@@ -343,7 +346,7 @@ public class BlogRecyclerAdapter extends RecyclerView.Adapter<BlogRecyclerAdapte
         private CircularImageView blogUserImage;
 
         private ImageView blogLikeBtn, popUpHome;
-        private TextView blogLikeCount;
+        private TextView blogLikeCount, hideItem;
 
         private ImageView blogCommentBtn;
 
@@ -355,6 +358,7 @@ public class BlogRecyclerAdapter extends RecyclerView.Adapter<BlogRecyclerAdapte
             super(itemView);
             mView = itemView;
 
+            hideItem = mView.findViewById(R.id.hideitem);
             blogLikeBtn = mView.findViewById(R.id.btn_like);
             blogCommentBtn = mView.findViewById(R.id.btn_comment);
 //            deleteBtn = mView.findViewById(R.id.btn_delete);

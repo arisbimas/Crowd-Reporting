@@ -6,6 +6,7 @@
     android:layout_height="wrap_content">
 
     <android.support.v7.widget.CardView
+        android:id="@+id/cardview_home"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="0dp"
@@ -158,6 +159,18 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
         </android.support.constraint.ConstraintLayout>
+
+        <TextView
+            android:id="@+id/hideitem"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@android:color/white"
+            android:gravity="center_vertical|center_horizontal"
+            android:padding="10dp"
+            android:text="Thanks to Reported this post."
+            android:textColor="@color/dasarpink"
+            android:textSize="30dp"
+            android:visibility="invisible" />
 
     </android.support.v7.widget.CardView>
 

@@ -29,6 +29,8 @@ import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import javax.annotation.Nullable;
@@ -92,16 +94,16 @@ public class HomeFragment extends Fragment {
 
                     if(reachedBottom){
 
-                        loadMorePost();
+//                        loadMorePost();
 
                     }
 
                 }
             });
 
-            Query firstQuery = firebaseFirestore.collection("Posts").whereEqualTo("reports", "false")
-                    .orderBy("timestamp", Query.Direction.DESCENDING)
-                    .limit(3);
+            Query firstQuery = firebaseFirestore.collection("Posts")
+                    .whereGreaterThanOrEqualTo("desc", "bekasi")
+                    .orderBy("desc", Query.Direction.DESCENDING);
             firstQuery.addSnapshotListener(getActivity(), new EventListener<QuerySnapshot>() {
                 @Override
                 public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
@@ -131,12 +133,24 @@ public class HomeFragment extends Fragment {
                                 if (isFirstPageFirstLoad) {
 
                                     blog_list.add(blogPost);
+                                    Collections.sort(blog_list, new Comparator<Blog>() {
+                                        @Override
+                                        public int compare(Blog o1, Blog o2) {
+                                            return o2.getTimestamp().compareTo(o1.getTimestamp());
+                                        }
+                                    });
                                     blogRecyclerAdapter.notifyItemInserted(blog_list.size());
                                     blogRecyclerAdapter.notifyDataSetChanged();
 
                                 } else {
 
                                     blog_list.add(0, blogPost);
+                                    Collections.sort(blog_list, new Comparator<Blog>() {
+                                        @Override
+                                        public int compare(Blog o1, Blog o2) {
+                                            return o2.getTimestamp().compareTo(o1.getTimestamp());
+                                        }
+                                    });
                                     blogRecyclerAdapter.notifyItemInserted(0);
                                     blogRecyclerAdapter.notifyDataSetChanged();
 
@@ -161,47 +175,46 @@ public class HomeFragment extends Fragment {
         return view;
     }
 
-    public void loadMorePost(){
-
-        if(firebaseAuth.getCurrentUser() != null) {
-
-            Query nextQuery = firebaseFirestore.collection("Posts").whereEqualTo("reports", "false")
-                    .orderBy("timestamp", Query.Direction.DESCENDING)
-                    .startAfter(lastVisible)
-                    .limit(3);
-
-            nextQuery.addSnapshotListener(getActivity(), new EventListener<QuerySnapshot>() {
-                @Override
-                public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
-
-                    if (e != null) {
-                        Log.w(TAG, "listen:error", e);
-                        return;
-                    }
-
-                    if (!documentSnapshots.isEmpty()) {
-
-                        lastVisible = documentSnapshots.getDocuments().get(documentSnapshots.size() - 1);
-                        for (DocumentChange doc : documentSnapshots.getDocumentChanges()) {
-
-                            if (doc.getType() == DocumentChange.Type.ADDED) {
-
-                                String blogPostId = doc.getDocument().getId();
-                                Blog blogPost = doc.getDocument().toObject(Blog.class).withId(blogPostId);
-                                blog_list.add(blogPost);
-
-                                blogRecyclerAdapter.notifyItemInserted(blog_list.size());
-                                blogRecyclerAdapter.notifyDataSetChanged();
-                            }
-
-                        }
-                    }
-
-                }
-            });
-
-        }
-
-    }
+//    public void loadMorePost(){
+//
+//        if(firebaseAuth.getCurrentUser() != null) {
+//
+//            Query nextQuery = firebaseFirestore.collection("Posts")
+//                    .whereGreaterThanOrEqualTo("desc", "bekasi")
+//                    .limit(3);
+//
+//            nextQuery.addSnapshotListener(getActivity(), new EventListener<QuerySnapshot>() {
+//                @Override
+//                public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
+//
+//                    if (e != null) {
+//                        Log.w(TAG, "listen:error", e);
+//                        return;
+//                    }
+//
+//                    if (!documentSnapshots.isEmpty()) {
+//
+//                        lastVisible = documentSnapshots.getDocuments().get(documentSnapshots.size() - 1);
+//                        for (DocumentChange doc : documentSnapshots.getDocumentChanges()) {
+//
+//                            if (doc.getType() == DocumentChange.Type.ADDED) {
+//
+//                                String blogPostId = doc.getDocument().getId();
+//                                Blog blogPost = doc.getDocument().toObject(Blog.class).withId(blogPostId);
+//                                blog_list.add(blogPost);
+//
+//                                blogRecyclerAdapter.notifyItemInserted(blog_list.size());
+//                                blogRecyclerAdapter.notifyDataSetChanged();
+//                            }
+//
+//                        }
+//                    }
+//
+//                }
+//            });
+//
+//        }
+//
+//    }
 
 }
