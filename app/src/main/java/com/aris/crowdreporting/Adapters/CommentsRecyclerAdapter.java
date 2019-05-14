@@ -1,4 +1,4 @@
-package com.aris.crowdreporting;
+package com.aris.crowdreporting.Adapters;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -8,6 +8,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.aris.crowdreporting.HelperClasses.Comments;
+import com.aris.crowdreporting.R;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.google.android.gms.tasks.OnCompleteListener;

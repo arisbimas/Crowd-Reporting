@@ -1,21 +1,19 @@
-package com.aris.crowdreporting;
+package com.aris.crowdreporting.HelperClasses;
 
-
-import com.google.firebase.firestore.ServerTimestamp;
 
 import java.util.Date;
 
 public class Blog  extends BlogPostId{
 
-    public String user_id, image_url, desc, image_thumb, title;
+    public String user_id, image_uri, desc, image_thumb, title;
     public Date timestamp;
 
     public Blog() {
     }
 
-    public Blog(String user_id, String image_url, String desc, String image_thumb, Date timestamp, String title) {
+    public Blog(String user_id, String image_uri, String desc, String image_thumb, Date timestamp, String title) {
         this.user_id = user_id;
-        this.image_url = image_url;
+        this.image_uri = image_uri;
         this.desc = desc;
         this.image_thumb = image_thumb;
         this.timestamp = timestamp;
@@ -30,12 +28,12 @@ public class Blog  extends BlogPostId{
         this.user_id = user_id;
     }
 
-    public String getImage_url() {
-        return image_url;
+    public String getImage_uri() {
+        return image_uri;
     }
 
-    public void setImage_url(String image_url) {
-        this.image_url = image_url;
+    public void setImage_uri(String image_uri) {
+        this.image_uri = image_uri;
     }
 
     public String getDesc() {

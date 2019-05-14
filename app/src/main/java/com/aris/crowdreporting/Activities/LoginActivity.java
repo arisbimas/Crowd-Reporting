@@ -1,4 +1,4 @@
-package com.aris.crowdreporting;
+package com.aris.crowdreporting.Activities;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -11,11 +11,11 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import com.aris.crowdreporting.R;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;

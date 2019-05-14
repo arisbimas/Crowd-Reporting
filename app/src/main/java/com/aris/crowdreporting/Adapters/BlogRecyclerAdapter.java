@@ -1,8 +1,7 @@
-package com.aris.crowdreporting;
+package com.aris.crowdreporting.Adapters;
 
 import android.app.Activity;
 import android.app.Dialog;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -22,10 +21,13 @@ import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.aris.crowdreporting.Activities.DetailActivity;
+import com.aris.crowdreporting.HelperClasses.Blog;
+import com.aris.crowdreporting.HelperUtils.TimeAgo;
+import com.aris.crowdreporting.R;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -37,17 +39,12 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
 import com.mikhaellopez.circularimageview.CircularImageView;
 
-import java.lang.reflect.Array;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.annotation.Nullable;
-
-import de.hdodenhof.circleimageview.CircleImageView;
 
 import static android.support.constraint.Constraints.TAG;
 
@@ -89,8 +86,9 @@ public class BlogRecyclerAdapter extends RecyclerView.Adapter<BlogRecyclerAdapte
         String desc_data = blog_list.get(position).getDesc();
         holder.setDescText(desc_data);
 
-        String image_url = blog_list.get(position).getImage_url();
+        String image_url = blog_list.get(position).getImage_uri();
         String thumbUri = blog_list.get(position).getImage_thumb();
+
         holder.setBlogImage(image_url, thumbUri);
 
         String user_id = blog_list.get(position).getUser_id();
@@ -134,7 +132,10 @@ public class BlogRecyclerAdapter extends RecyclerView.Adapter<BlogRecyclerAdapte
 
         long millisecond = blog_list.get(position).getTimestamp().getTime();
             String dateString = DateFormat.format("MM/dd/yyyy", new Date(millisecond)).toString();
-            holder.setTime(dateString);
+
+        String timeAgo = TimeAgo.getTimeAgo(millisecond);
+//        Toast.makeText(context, ""+timeAgo, Toast.LENGTH_SHORT).show();
+        holder.setTime(timeAgo);
 
 
         //Get Likes Count
@@ -212,9 +213,16 @@ public class BlogRecyclerAdapter extends RecyclerView.Adapter<BlogRecyclerAdapte
             @Override
             public void onClick(View v) {
 
-                Intent commentIntent = new Intent(context, CommentsActivity.class);
-                commentIntent.putExtra("blog_post_id", blogPostId);
-                context.startActivity(commentIntent);
+                Intent intent = new Intent(context, DetailActivity.class);
+                intent.putExtra("blog_id",blogPostId);
+                intent.putExtra("user_id",currentUserId);
+                intent.putExtra("imurl",image_url);
+                intent.putExtra("desc",desc_data);
+
+                intent.putExtra("time_post",timeAgo);
+
+
+                context.startActivity(intent);
 
             }
         });
@@ -309,8 +317,11 @@ public class BlogRecyclerAdapter extends RecyclerView.Adapter<BlogRecyclerAdapte
             public void onClick(View v) {
                 Intent intent = new Intent(context, DetailActivity.class);
                 intent.putExtra("blog_id",blogPostId);
-                intent.putExtra("user_id",user_id);
+                intent.putExtra("user_id",currentUserId);
                 intent.putExtra("imurl",image_url);
+                intent.putExtra("desc",desc_data);
+
+                intent.putExtra("time_post",timeAgo);
 
                 context.startActivity(intent);
             }
@@ -374,7 +385,8 @@ public class BlogRecyclerAdapter extends RecyclerView.Adapter<BlogRecyclerAdapte
         public void setDescText(String descText){
 
             descView = mView.findViewById(R.id.blog_desc);
-            descView.setText(descText);
+            String upperString = descText.substring(0,1).toUpperCase() + descText.substring(1);
+            descView.setText(upperString);
 
         }
 

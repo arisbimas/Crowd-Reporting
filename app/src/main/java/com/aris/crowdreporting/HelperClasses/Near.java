@@ -1,11 +1,11 @@
-package com.aris.crowdreporting;
+package com.aris.crowdreporting.HelperClasses;
 
 import java.util.Date;
 
 public class Near extends NearPostId{
 
     public String user_id;
-    public String image_url;
+    public String image_uri;
     public String desc;
     public String longitude;
     public String latitude;
@@ -33,12 +33,12 @@ public class Near extends NearPostId{
         this.user_id = user_id;
     }
 
-    public String getImage_url() {
-        return image_url;
+    public String getImage_uri() {
+        return image_uri;
     }
 
-    public void setImage_url(String image_url) {
-        this.image_url = image_url;
+    public void setImage_uri(String image_uri) {
+        this.image_uri = image_uri;
     }
 
     public String getDesc() {
@@ -69,9 +69,9 @@ public class Near extends NearPostId{
         return timestamp;
     }
 
-    public Near(String user_id, String image_url, String desc, String longitude, String latitude, Date timestamp, String image_thumb) {
+    public Near(String user_id, String image_uri, String desc, String longitude, String latitude, Date timestamp, String image_thumb) {
         this.user_id = user_id;
-        this.image_url = image_url;
+        this.image_uri = image_uri;
         this.desc = desc;
         this.longitude = longitude;
         this.latitude = latitude;

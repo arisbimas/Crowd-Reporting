@@ -1,64 +1,40 @@
 package com.aris.crowdreporting.Fragment;
 
-import android.Manifest;
-import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.drawable.AnimationDrawable;
 import android.location.Location;
-import android.location.LocationListener;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.FrameLayout;
-import android.widget.ImageButton;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.PopupMenu;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.aris.crowdreporting.Blog;
-import com.aris.crowdreporting.LoginActivity;
-import com.aris.crowdreporting.MainActivity;
-import com.aris.crowdreporting.MyPhotoRecyclerAdapter;
+import com.aris.crowdreporting.HelperClasses.Blog;
+import com.aris.crowdreporting.Activities.LoginActivity;
+import com.aris.crowdreporting.Adapters.MyPhotoRecyclerAdapter;
 import com.aris.crowdreporting.R;
-import com.aris.crowdreporting.SetupActivity;
+import com.aris.crowdreporting.Activities.SetupActivity;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.google.android.gms.auth.api.Auth;
-import com.google.android.gms.auth.api.signin.GoogleSignIn;
-import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
-import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.location.LocationSettingsRequest;
-import com.google.android.gms.location.LocationSettingsResult;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
@@ -72,10 +48,6 @@ import com.mikhaellopez.circularimageview.CircularImageView;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.annotation.Nullable;
-
-import static android.support.constraint.Constraints.TAG;
 
 public class AccountFragment extends DialogFragment implements
         GoogleApiClient.OnConnectionFailedListener {
@@ -268,22 +240,26 @@ public class AccountFragment extends DialogFragment implements
     //sign out method
     public void signOut() {
 
-        Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(
-                new ResultCallback<Status>() {
-                    @Override
-                    public void onResult(Status status) {
-                        mGoogleApiClient.disconnect();
-                        mGoogleApiClient.connect();
-                        // [START_EXCLUDE]
-                        firebaseAuth.getInstance().signOut();
-                        Intent i = new Intent(getActivity(),
-                                LoginActivity.class);
-                        i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK |
-                                Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                        startActivity(i);
-                        // [END_EXCLUDE]
-                    }
-                });
+        if (mGoogleApiClient.isConnected()){
+            Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(
+                    new ResultCallback<Status>() {
+                        @Override
+                        public void onResult(Status status) {
+                            mGoogleApiClient.disconnect();
+                            mGoogleApiClient.connect();
+                            // [START_EXCLUDE]
+                            firebaseAuth.getInstance().signOut();
+                            Intent i = new Intent(getActivity(),
+                                    LoginActivity.class);
+                            i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK |
+                                    Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                            startActivity(i);
+                            // [END_EXCLUDE]
+                        }
+                    });
+        } else {
+            Toast.makeText(getActivity(), "err", Toast.LENGTH_SHORT).show();
+        }
 
 
     }

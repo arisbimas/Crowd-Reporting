@@ -1,42 +1,21 @@
-package com.aris.crowdreporting;
+package com.aris.crowdreporting.Adapters;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.text.format.DateFormat;
-import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.PopupMenu;
-import android.widget.TextView;
-import android.widget.Toast;
 
+import com.aris.crowdreporting.Activities.DetailActivity;
+import com.aris.crowdreporting.HelperClasses.Blog;
+import com.aris.crowdreporting.R;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.EventListener;
-import com.google.firebase.firestore.FieldValue;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
-import com.google.firebase.firestore.QuerySnapshot;
-import com.mikhaellopez.circularimageview.CircularImageView;
 
-import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
-import static android.support.constraint.Constraints.TAG;
 
 public class MyPhotoRecyclerAdapter extends RecyclerView.Adapter<MyPhotoRecyclerAdapter.ProfileBlogViewHolder> {
 
@@ -62,7 +41,7 @@ public class MyPhotoRecyclerAdapter extends RecyclerView.Adapter<MyPhotoRecycler
         final Blog blogPost = blog_list.get(holder.getAdapterPosition());
 
         String title = blogPost.getTitle();
-        String image = blogPost.getImage_url();
+        String image = blogPost.getImage_uri();
         String thumb = blogPost.getImage_thumb();
 
 //        GlideLoadImage.loadImage(context,holder.blogImage,thumb,image);
@@ -77,7 +56,7 @@ public class MyPhotoRecyclerAdapter extends RecyclerView.Adapter<MyPhotoRecycler
                 Intent intent = new Intent(context, DetailActivity.class);
                 intent.putExtra("blog_id",blogPost.BlogPostId);
                 intent.putExtra("user_id",blogPost.getUser_id());
-                intent.putExtra("imurl",blogPost.getImage_url());
+                intent.putExtra("imurl",blogPost.getImage_uri());
 
                 context.startActivity(intent);
             }

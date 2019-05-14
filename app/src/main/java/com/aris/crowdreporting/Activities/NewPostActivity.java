@@ -1,22 +1,20 @@
-package com.aris.crowdreporting;
+package com.aris.crowdreporting.Activities;
 
 import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.PorterDuff;
 import android.location.Location;
+
+import com.aris.crowdreporting.R;
 import com.google.android.gms.location.LocationListener;
 
-import android.location.LocationManager;
 import android.net.Uri;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -151,7 +149,8 @@ public class NewPostActivity extends AppCompatActivity implements GoogleApiClien
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-        AlertDialog dialog = new SpotsDialog(NewPostActivity.this);
+        AlertDialog dialog = new SpotsDialog(NewPostActivity.this, "Uploading...");
+
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.postit) {

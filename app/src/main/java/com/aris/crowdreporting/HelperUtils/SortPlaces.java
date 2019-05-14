@@ -1,5 +1,6 @@
-package com.aris.crowdreporting;
+package com.aris.crowdreporting.HelperUtils;
 
+import com.aris.crowdreporting.HelperClasses.Near;
 import com.google.type.LatLng;
 
 import java.util.Comparator;

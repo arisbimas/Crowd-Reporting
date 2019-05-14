@@ -1,4 +1,4 @@
-package com.aris.crowdreporting;
+package com.aris.crowdreporting.Activities;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -14,6 +14,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
+import com.aris.crowdreporting.R;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;

@@ -1,4 +1,4 @@
-package com.aris.crowdreporting;
+package com.aris.crowdreporting.Activities;
 
 
 import android.graphics.Bitmap;
@@ -17,6 +17,7 @@ import com.akexorcist.googledirection.constant.TransportMode;
 import com.akexorcist.googledirection.model.Direction;
 import com.akexorcist.googledirection.model.Route;
 import com.akexorcist.googledirection.util.DirectionConverter;
+import com.aris.crowdreporting.R;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
@@ -29,7 +30,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.ArrayList;
 
-class MapsActivity extends AppCompatActivity implements OnMapReadyCallback, View.OnClickListener, DirectionCallback {
+public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback, View.OnClickListener, DirectionCallback {
 
     private Button btnRequestDirection;
     private GoogleMap googleMap;

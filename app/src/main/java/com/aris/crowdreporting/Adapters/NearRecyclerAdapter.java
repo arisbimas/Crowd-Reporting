@@ -1,4 +1,4 @@
-package com.aris.crowdreporting;
+package com.aris.crowdreporting.Adapters;
 
 import android.Manifest;
 import android.app.Activity;
@@ -6,14 +6,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
-import android.location.LocationListener;
 import android.location.LocationManager;
-import android.location.LocationProvider;
-import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
+import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +19,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.aris.crowdreporting.Activities.DetailActivity;
+import com.aris.crowdreporting.HelperClasses.Near;
+import com.aris.crowdreporting.HelperClasses.User;
+import com.aris.crowdreporting.Activities.MapsActivity;
+import com.aris.crowdreporting.HelperUtils.TimeAgo;
+import com.aris.crowdreporting.R;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -30,24 +34,12 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
-import com.google.type.LatLng;
 
-import java.text.DecimalFormat;
+import java.util.Date;
 import java.util.List;
 
-import javax.annotation.Nullable;
-
 import de.hdodenhof.circleimageview.CircleImageView;
-
-import static android.support.constraint.Constraints.TAG;
-import static java.lang.Math.acos;
-import static java.lang.Math.cos;
-import static java.lang.Math.sin;
 
 public class NearRecyclerAdapter extends RecyclerView.Adapter<NearRecyclerAdapter.ViewHolder> {
 
@@ -87,10 +79,13 @@ public class NearRecyclerAdapter extends RecyclerView.Adapter<NearRecyclerAdapte
     @Override
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, int i) {
 
+        final String blogPostId = near_list.get(i).BlogPostId;
+        final String currentUserId = firebaseAuth.getCurrentUser().getUid();
+
         String desc_data = near_list.get(i).getDesc();
         viewHolder.setNearDescText(desc_data);
 
-        String image_url = near_list.get(i).getImage_url();
+        String image_url = near_list.get(i).getImage_uri();
         String thumbUri = near_list.get(i).getImage_thumb();
         viewHolder.setBlogImage(image_url, thumbUri);
 
@@ -159,8 +154,27 @@ public class NearRecyclerAdapter extends RecyclerView.Adapter<NearRecyclerAdapte
             }
         });
 
+        long millisecond = near_list.get(i).getTimestamp().getTime();
+        String dateString = DateFormat.format("MM/dd/yyyy", new Date(millisecond)).toString();
+
+        String timeAgo = TimeAgo.getTimeAgo(millisecond);
+        viewHolder.setNearTime(timeAgo);
+
+        viewHolder.cardView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(context, DetailActivity.class);
+                intent.putExtra("blog_id",blogPostId);
+                intent.putExtra("user_id",currentUserId);
+                intent.putExtra("imurl",image_url);
+                intent.putExtra("desc",desc_data);
+
+                intent.putExtra("time_post",timeAgo);
 
 
+                context.startActivity(intent);
+            }
+        });
 
     }
 
@@ -178,21 +192,29 @@ public class NearRecyclerAdapter extends RecyclerView.Adapter<NearRecyclerAdapte
         private TextView nearDesc;
         private TextView blogUserName;
         private CircleImageView blogUserImage;
-        private TextView nearU;
+        private TextView nearU, nearTime;
         private ImageView blogImageView, seeMap;
+        private CardView cardView;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             mView = itemView;
             nearU = mView.findViewById(R.id.jarak);
             seeMap = mView.findViewById(R.id.see_map);
+            cardView = mView.findViewById(R.id.card_near);
         }
 
         public void setNearDescText(String descText) {
 
             nearDesc = mView.findViewById(R.id.near_desc);
-            nearDesc.setText(descText);
+            String upperString = descText.substring(0,1).toUpperCase() + descText.substring(1);
+            nearDesc.setText(upperString);
 
+        }
+
+        public void setNearTime(String timePost){
+            nearTime = mView.findViewById(R.id.near_time);
+            nearTime.setText(timePost);
         }
 
         public void setUserData(String name) {
@@ -221,32 +243,6 @@ public class NearRecyclerAdapter extends RecyclerView.Adapter<NearRecyclerAdapte
             ).into(blogImageView);
 
         }
-
-//        public void setNearU(Double latitude) {
-//            nearU = mView.findViewById(R.id.jarak);
-//            nearU.setText("" + latitude);
-//
-//        }
-//
-//        public void getDistanceBetween(Double latitude1, Double longitude1, Double latitude2, Double longitude2 )
-//        {
-//            Double theta = longitude1 - longitude2;
-//            Double distance = (sin(Math.toRadians(latitude1)) * sin(Math.toRadians(latitude2)))  + (cos(Math.toRadians(latitude1)) * cos(Math.toRadians(latitude2)) * cos(Math.toRadians(theta)));
-//            distance = acos(distance);
-//            distance = Math.toDegrees(distance);
-//            Double m = distance * 60 * 1.1515;
-//            Double km = distance * 1.609344;
-//
-//            DecimalFormat decimalFormat = new DecimalFormat("#.##");
-//            String format = decimalFormat.format(m);
-//
-//
-//            nearU = mView.findViewById(R.id.jarak);
-//
-//            nearU.setText(""+format);
-//
-//        }
-
 
         public void getDistance(Double lat_a, Double lng_a, Double lat_b, Double lng_b) {
             // earth radius is in mile

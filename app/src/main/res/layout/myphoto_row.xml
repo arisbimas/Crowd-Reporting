@@ -3,7 +3,6 @@
     android:layout_margin="2dp"
     android:backgroundTint="#F8F8F8"
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/single_linear_layout"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content">

@@ -2,28 +2,16 @@ package com.aris.crowdreporting.CheckLoc;
 
 import android.Manifest;
 import android.app.Activity;
-import android.app.Fragment;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.graphics.PorterDuff;
 import android.location.Location;
 
-import com.aris.crowdreporting.Fragment.HomeFragment;
-import com.aris.crowdreporting.Fragment.NearFragment;
-import com.aris.crowdreporting.MainActivity;
+import com.aris.crowdreporting.Activities.MainActivity;
 import com.aris.crowdreporting.R;
 import com.google.android.gms.location.LocationListener;
 
-import android.location.LocationManager;
-import android.net.Uri;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -39,7 +27,6 @@ import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResult;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 

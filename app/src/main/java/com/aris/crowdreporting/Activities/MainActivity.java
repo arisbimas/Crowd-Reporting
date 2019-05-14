@@ -1,4 +1,4 @@
-package com.aris.crowdreporting;
+package com.aris.crowdreporting.Activities;
 
 import android.Manifest;
 import android.app.AlertDialog;
@@ -21,6 +21,7 @@ import com.aris.crowdreporting.Fragment.AccountFragment;
 import com.aris.crowdreporting.Fragment.HomeFragment;
 import com.aris.crowdreporting.Fragment.NearFragment;
 import com.aris.crowdreporting.Fragment.TestFragment;
+import com.aris.crowdreporting.R;
 import com.firebase.client.Firebase;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -28,7 +29,6 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.ittianyu.bottomnavigationviewex.BottomNavigationViewEx;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.MultiplePermissionsReport;
 import com.karumi.dexter.PermissionToken;

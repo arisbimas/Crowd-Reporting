@@ -1,4 +1,4 @@
-package com.aris.crowdreporting;
+package com.aris.crowdreporting.HelperClasses;
 
 import java.util.Date;
 

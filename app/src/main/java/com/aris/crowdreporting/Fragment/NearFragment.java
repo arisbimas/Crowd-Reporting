@@ -2,22 +2,16 @@ package com.aris.crowdreporting.Fragment;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.location.Location;
-import android.location.LocationManager;
-import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -31,35 +25,25 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 
-import com.aris.crowdreporting.Blog;
-import com.aris.crowdreporting.CheckLoc.CheckLoc;
-import com.aris.crowdreporting.MainActivity;
-import com.aris.crowdreporting.NearRecyclerAdapter;
-import com.aris.crowdreporting.Near;
-import com.aris.crowdreporting.NearRecyclerAdapter;
-import com.aris.crowdreporting.NewPostActivity;
+import com.aris.crowdreporting.Activities.DetailActivity;
+import com.aris.crowdreporting.Adapters.NearRecyclerAdapter;
+import com.aris.crowdreporting.HelperClasses.Near;
 import com.aris.crowdreporting.R;
-import com.aris.crowdreporting.SortPlaces;
-import com.aris.crowdreporting.User;
-import com.google.android.gms.auth.api.Auth;
+import com.aris.crowdreporting.HelperUtils.SortPlaces;
+import com.aris.crowdreporting.HelperClasses.User;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationAvailability;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResult;
-import com.google.android.gms.location.LocationSettingsStates;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -69,16 +53,13 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.type.LatLng;
-import com.theartofdev.edmodo.cropper.CropImage;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
-import static android.support.constraint.Constraints.TAG;
-import static com.google.firebase.crash.FirebaseCrash.log;
+import dmax.dialog.SpotsDialog;
 
 public class NearFragment extends Fragment implements GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
@@ -106,6 +87,8 @@ public class NearFragment extends Fragment implements GoogleApiClient.Connection
 
     private FusedLocationProviderClient client;
     LatLng latLng;
+
+    private Date cDate;
 
     public NearFragment() {
         // Required empty public constructor
@@ -167,7 +150,7 @@ public class NearFragment extends Fragment implements GoogleApiClient.Connection
 
         //HARI INI
         long secs = date.getTime();
-        Date cDate = new Date(secs);
+        cDate = new Date(secs);
 
         //7 hari yg lalu
         // 7hari yang lalu
@@ -175,7 +158,6 @@ public class NearFragment extends Fragment implements GoogleApiClient.Connection
         long secs2 = date.getTime() - (7 * DAY_IN_MS);
         Date daysAgo = new Date(secs2);
 
-        Toast.makeText(getActivity(), ""+daysAgo, Toast.LENGTH_SHORT).show();
         Query firstQuery = firebaseFirestore.collection("Posts")
                 .whereEqualTo("reports", "false")
                 .whereLessThanOrEqualTo("timestamp", cDate)
@@ -356,8 +338,7 @@ public class NearFragment extends Fragment implements GoogleApiClient.Connection
                 .addApi(LocationServices.API)
                 .build();
         googleApiClient.connect();
-        dialog = new ProgressDialog(getContext());
-        dialog.setMessage("Track Your Location, Please Wait!");
+        AlertDialog dialog = new SpotsDialog(getContext(), "Track Your Location, Please Wait!");
         dialog.show();
     }
 
