@@ -21,6 +21,7 @@ import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.aris.crowdreporting.Activities.DetailProfileActivity;
 import com.aris.crowdreporting.Activities.DetailActivity;
 import com.aris.crowdreporting.HelperClasses.Blog;
 import com.aris.crowdreporting.HelperUtils.TimeAgo;
@@ -336,6 +337,15 @@ public class BlogRecyclerAdapter extends RecyclerView.Adapter<BlogRecyclerAdapte
             }
         });
 
+        holder.blogUserName.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                holder.showDataPopUpProfile(blog_list.get(position).getUser_id());
+                holder.mDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                holder.mDialog.show();
+            }
+        });
+
     }
 
 
@@ -361,7 +371,7 @@ public class BlogRecyclerAdapter extends RecyclerView.Adapter<BlogRecyclerAdapte
 
         private ImageView blogCommentBtn;
 
-        private Button deleteBtn;
+        private Button deleteBtn, viewProfileBtn;
 
         private Dialog mDialog;
 
@@ -443,6 +453,7 @@ public class BlogRecyclerAdapter extends RecyclerView.Adapter<BlogRecyclerAdapte
             popUpUserEmail = mDialog.findViewById(R.id.popup_user_email);
             popUpUserPhone = mDialog.findViewById(R.id.popup_user_phone);
             popUpUserImage = mDialog.findViewById(R.id.popup_user_image);
+            viewProfileBtn = mDialog.findViewById(R.id.btnviewprofile);
 
             firebaseFirestore.collection("Users").document(popupName).addSnapshotListener(new EventListener<DocumentSnapshot>() {
                 @Override
@@ -457,6 +468,15 @@ public class BlogRecyclerAdapter extends RecyclerView.Adapter<BlogRecyclerAdapte
                         popUpUserEmail.setText(popupuseremail);
                         popUpUserPhone.setText(popupuserphone);
                         Glide.with(context).load(popupuserimg).into(popUpUserImage);
+
+                        viewProfileBtn.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                Intent seeProfile = new Intent(context, DetailProfileActivity.class);
+                                seeProfile.putExtra("user_id", popupName);
+                                context.startActivity(seeProfile);
+                            }
+                        });
                     }
                 }
             });

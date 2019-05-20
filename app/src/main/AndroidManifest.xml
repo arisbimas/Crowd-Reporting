@@ -29,7 +29,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".Activities.DetailActivity"></activity>
+        <activity android:name=".Activities.DetailProfileActivity"></activity>
+        <activity android:name=".Activities.DetailActivity" />
         <activity android:name=".CheckLoc.CheckLoc" />
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.

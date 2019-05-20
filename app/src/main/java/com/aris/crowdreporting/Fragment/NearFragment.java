@@ -350,6 +350,7 @@ public class NearFragment extends Fragment implements GoogleApiClient.Connection
             Double latitude = mylocation.getLatitude();
             Double longitude = mylocation.getLongitude();
             nearRecyclerAdapter.notifyDataSetChanged();
+            AlertDialog dialog = new SpotsDialog(getContext(), "Track Your Location, Please Wait!");
             dialog.dismiss();
         }
     }
