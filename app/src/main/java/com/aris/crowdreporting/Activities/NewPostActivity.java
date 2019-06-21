@@ -157,9 +157,9 @@ public class NewPostActivity extends AppCompatActivity implements GoogleApiClien
 
             String latitude = mLati.getText().toString();
             String longitude = mLongi.getText().toString();
-            String desc = mDesc.getText().toString();
+            String desc = mDesc.getText().toString().toLowerCase();
 
-            if (!TextUtils.isEmpty(latitude) && !TextUtils.isEmpty(longitude) && !TextUtils.isEmpty(desc) && postImageUri != null){
+            if (!TextUtils.isEmpty(latitude) && !TextUtils.isEmpty(longitude) && !TextUtils.isEmpty(desc) && postImageUri != null && desc.contains("bekasi")){
 
 //                progressBar.setVisibility(View.VISIBLE);
                 dialog.show();
@@ -243,6 +243,131 @@ public class NewPostActivity extends AppCompatActivity implements GoogleApiClien
                                         postMap.put("reports", "false");
 
                                         firebaseFirestore.collection("Posts").add(postMap).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<DocumentReference> task) {
+
+                                                if (task.isSuccessful()){
+
+                                                    Toast.makeText(NewPostActivity.this, "Post was Added", Toast.LENGTH_SHORT).show();
+                                                    Intent mainIntent = new Intent(NewPostActivity.this, MainActivity.class);
+                                                    startActivity(mainIntent);
+                                                    finish();
+
+                                                } else {
+
+                                                }
+
+//                                                progressBar.setVisibility(View.INVISIBLE);
+                                                dialog.dismiss();
+
+                                            }
+                                        });
+
+                                    } else {
+                                        // Handle failures
+                                        // ...
+                                    }
+                                }
+                            });
+
+
+                        } else {
+
+                            String errMsg = task.getException().getMessage();
+                            Toast.makeText(NewPostActivity.this, "Image Error " + errMsg, Toast.LENGTH_SHORT).show();
+
+//                            progressBar.setVisibility(View.INVISIBLE);
+                            dialog.dismiss();
+                        }
+                    }
+                });
+
+            }
+            //JIKA TIDAK ADA KATA BEKASI
+            else if (!TextUtils.isEmpty(latitude) && !TextUtils.isEmpty(longitude) && !TextUtils.isEmpty(desc) && postImageUri != null && !desc.contains("bekasi")){
+
+//                progressBar.setVisibility(View.VISIBLE);
+                dialog.show();
+
+                String randomName = UUID.randomUUID().toString();
+
+                StorageReference file_path = storageReference.child("post_image_trash").child(randomName + ".jpg");
+                UploadTask uploadTask = file_path.putFile(postImageUri);
+                Task<Uri> urlTask = uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
+                    @Override
+                    public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
+                        if (!task.isSuccessful()) {
+                            throw task.getException();
+                        }
+
+                        // Continue with the task to get the download URL
+                        return file_path.getDownloadUrl();
+                    }
+                }).addOnCompleteListener(new OnCompleteListener<Uri>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Uri> task) {
+                        if (task.isSuccessful()) {
+
+                            File newImageFile = new File(postImageUri.getPath());
+
+
+                            try {
+                                File imageZipperFile=new ImageZipper(NewPostActivity.this)
+                                        .setQuality(10)
+                                        .setMaxWidth(200)
+                                        .setMaxHeight(200)
+                                        .compressToFile(newImageFile);
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                            try {
+                                imageBitmap =new ImageZipper(NewPostActivity.this).compressToBitmap(newImageFile);
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+
+
+                            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                            imageBitmap.compress(Bitmap.CompressFormat.JPEG, 80, baos);
+                            byte[] thumbData = baos.toByteArray();
+
+                            final StorageReference ref = storageReference.child("post_image_trash/thumbs").child(randomName + ".jpg");
+                            UploadTask uploadTask = ref.putBytes(thumbData);
+
+                            Task<Uri> urlTask = uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
+                                @Override
+                                public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
+                                    if (!task.isSuccessful()) {
+                                        throw task.getException();
+                                    }
+
+                                    // Continue with the task to get the download URL
+                                    return ref.getDownloadUrl();
+                                }
+                            }).addOnCompleteListener(new OnCompleteListener<Uri>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Uri> taskThumb) {
+                                    if (taskThumb.isSuccessful()) {
+                                        Uri downloadUri = task.getResult();
+                                        Uri downloadUriThumb = taskThumb.getResult();
+                                        String imageUri = downloadUri.toString();
+                                        String imageUriThumb = downloadUriThumb.toString();
+                                        String lati = latitude.toString();
+                                        String longi = longitude.toString();
+                                        String des = desc.toString();
+
+
+                                        Map<String, Object> postMap = new HashMap<>();
+                                        postMap.put("image_uri", imageUri);
+                                        postMap.put("image_thumb", imageUriThumb);
+                                        postMap.put("latitude", lati);
+                                        postMap.put("longitude", longi);
+                                        postMap.put("desc", des);
+                                        postMap.put("user_id", current_user_id);
+                                        postMap.put("timestamp", FieldValue.serverTimestamp());
+                                        postMap.put("reports", "false");
+
+                                        firebaseFirestore.collection("PostsTrash").add(postMap).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
                                             @Override
                                             public void onComplete(@NonNull Task<DocumentReference> task) {
 

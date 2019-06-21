@@ -13,6 +13,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
@@ -41,6 +42,7 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener {
 
+    private static final String TAG = "MainActivity TAG";
     private FirebaseAuth.AuthStateListener mAuthStateListener;
     private FirebaseAuth mAuth;
     private FirebaseFirestore firebaseFirestore;
@@ -89,37 +91,48 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         super.onStart();
 
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+
         if (currentUser == null){
 
             sendToLogin();
 
         } else {
 
-            current_user_id = mAuth.getCurrentUser().getUid();
-            String usr = "Users";
-            firebaseFirestore.collection(usr).document(current_user_id).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                @Override
-                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+            if (currentUser.isEmailVerified()){
 
-                    if (task.isSuccessful()){
+                Log.d(TAG, "email terverifikasi");
 
-                        if (!task.getResult().exists()){
+                current_user_id = mAuth.getCurrentUser().getUid();
+                String usr = "Users";
+                firebaseFirestore.collection(usr).document(current_user_id).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
 
-                            Intent setupIntent = new Intent(MainActivity.this, SetupActivity.class);
-                            startActivity(setupIntent);
-                            finish();
+                        if (task.isSuccessful()){
+
+                            if (!task.getResult().exists()){
+
+                                Intent setupIntent = new Intent(MainActivity.this, SetupActivity.class);
+                                startActivity(setupIntent);
+                                finish();
+
+                            }
+
+                        } else {
+
+                            String errMsg = task.getException().getMessage();
+                            Toast.makeText(MainActivity.this, ""+ errMsg, Toast.LENGTH_SHORT).show();
 
                         }
-
-                    } else {
-
-                        String errMsg = task.getException().getMessage();
-                        Toast.makeText(MainActivity.this, ""+ errMsg, Toast.LENGTH_SHORT).show();
-
                     }
-                }
 
-            });
+                });
+
+            } else {
+                Intent emailVerifIntent = new Intent(MainActivity.this, VerificationEmailActivity.class);
+                startActivity(emailVerifIntent);
+                finish();
+            }
 
         }
     }

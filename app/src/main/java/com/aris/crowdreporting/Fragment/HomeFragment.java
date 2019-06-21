@@ -28,6 +28,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import dmax.dialog.SpotsDialog;
+
 import static android.support.constraint.Constraints.TAG;
 
 
@@ -44,7 +46,7 @@ public class HomeFragment extends Fragment {
     private DocumentSnapshot lastVisible;
     private Boolean isFirstPageFirstLoad = true;
 
-    private ProgressDialog progressDialog;
+    private SpotsDialog dialog;
     private String user_id;
     public HomeFragment() {
         // Required empty public constructor
@@ -69,9 +71,8 @@ public class HomeFragment extends Fragment {
         blog_list_view.setAdapter(blogRecyclerAdapter);
         blog_list_view.setHasFixedSize(true);
 
-        progressDialog = new ProgressDialog(getContext());
-        progressDialog.setMessage("Loading..");
-        progressDialog.show();
+        dialog = new SpotsDialog(getContext(), "Loading..");
+        dialog.show();
 
         if(firebaseAuth.getCurrentUser() != null) {
 
@@ -94,9 +95,7 @@ public class HomeFragment extends Fragment {
                 }
             });
 
-            Query firstQuery = firebaseFirestore.collection("Posts")
-                    .whereGreaterThanOrEqualTo("desc", "bekasi")
-                    .orderBy("desc", Query.Direction.DESCENDING);
+            Query firstQuery = firebaseFirestore.collection("Posts");
             firstQuery.addSnapshotListener(getActivity(), new EventListener<QuerySnapshot>() {
                 @Override
                 public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
@@ -148,7 +147,7 @@ public class HomeFragment extends Fragment {
                                     blogRecyclerAdapter.notifyDataSetChanged();
 
                                 }
-                                progressDialog.dismiss();
+                                dialog.dismiss();
 
 
                             }

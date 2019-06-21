@@ -1,5 +1,6 @@
 package com.aris.crowdreporting.Activities;
 
+import android.Manifest;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -12,6 +13,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -127,7 +129,7 @@ public class SetupActivity extends AppCompatActivity {
                 final String username = setupName.getText().toString();
                 final String phone = setupPhone.getText().toString();
 
-                if (!TextUtils.isEmpty(username) && mainImageUri != null) {
+                if (!TextUtils.isEmpty(username) && !TextUtils.isEmpty(phone) && mainImageUri != null) {
 //                    setupProgress.setVisibility(View.VISIBLE);
                     dialog.show();
 
@@ -172,8 +174,24 @@ public class SetupActivity extends AppCompatActivity {
                         storeFirestore(null, username, emailuser_id, phone);
 
                     }
-                } else {
-                    Toast.makeText(SetupActivity.this, "Pilih Gambar untuk Profile Image", Toast.LENGTH_SHORT).show();
+                } else if (mainImageUri == null){
+
+                    Toast toast = Toast.makeText(SetupActivity.this, "Please select photo", Toast.LENGTH_SHORT);
+                    toast.setGravity(Gravity.CENTER, 0, 0);
+                    toast.show();
+
+                } else if (TextUtils.isEmpty(username)){
+
+                    Toast toast = Toast.makeText(SetupActivity.this, "Please enter username", Toast.LENGTH_SHORT);
+                    toast.setGravity(Gravity.CENTER, 0, 0);
+                    toast.show();
+
+                } else if (TextUtils.isEmpty(phone)){
+
+                    Toast toast = Toast.makeText(SetupActivity.this, "Please enter phone number", Toast.LENGTH_SHORT);
+                    toast.setGravity(Gravity.CENTER, 0, 0);
+                    toast.show();
+
                 }
 
             }
@@ -184,19 +202,23 @@ public class SetupActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
+                if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
 
-                    if (ContextCompat.checkSelfPermission(SetupActivity.this, android.Manifest.permission.READ_EXTERNAL_STORAGE)!=
-                            PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(SetupActivity.this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE)!=
-                            PackageManager.PERMISSION_GRANTED){
-                        Toast.makeText(SetupActivity.this, "Please grant permissions", Toast.LENGTH_SHORT).show();
-                        ActivityCompat.requestPermissions(SetupActivity.this, new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE},READCODE);
-                        ActivityCompat.requestPermissions(SetupActivity.this, new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE},WRITECODE);
+                    if(ContextCompat.checkSelfPermission(SetupActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED){
+
+                        Toast.makeText(SetupActivity.this, "Permission Ok", Toast.LENGTH_LONG).show();
+                        ActivityCompat.requestPermissions(SetupActivity.this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
+
                     } else {
+
                         BringImagePicker();
+
                     }
+
                 } else {
+
                     BringImagePicker();
+
                 }
 
             }

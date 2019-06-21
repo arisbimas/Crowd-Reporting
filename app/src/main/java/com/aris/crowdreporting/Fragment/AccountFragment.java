@@ -82,7 +82,7 @@ public class AccountFragment extends DialogFragment implements
                              Bundle savedInstanceState) {
 
         // Inflate the layout for this fragment
-        View view =  inflater.inflate(R.layout.fragment_test, container, false);
+        View view =  inflater.inflate(R.layout.fragment_account, container, false);
 
         // declare and initialize FrameLayout
         View frameLayout = (View) view.findViewById(R.id.lini);
@@ -240,19 +240,19 @@ public class AccountFragment extends DialogFragment implements
     //sign out method
     public void signOut() {
 
+        FirebaseAuth.getInstance().signOut();
+
         if (mGoogleApiClient.isConnected()){
             Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(
                     new ResultCallback<Status>() {
                         @Override
                         public void onResult(Status status) {
                             mGoogleApiClient.disconnect();
-                            mGoogleApiClient.connect();
+                            //mGoogleApiClient.connect();
                             // [START_EXCLUDE]
-                            firebaseAuth.getInstance().signOut();
-                            Intent i = new Intent(getActivity(),
-                                    LoginActivity.class);
-                            i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK |
-                                    Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                            FirebaseAuth.getInstance().signOut();
+                            Intent i = new Intent(getActivity(), LoginActivity.class);
+                            i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                             startActivity(i);
                             // [END_EXCLUDE]
                         }

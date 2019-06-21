@@ -47,13 +47,12 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_marginBottom="20sp"
-                    android:fontFamily="@font/pacifico_regular"
+                    android:fontFamily="@font/fredokaone_regular"
                     android:text="-Register-"
                     android:textAlignment="center"
                     android:textAllCaps="false"
                     android:textColor="@color/colorPrimaryDark"
-                    android:textSize="18sp"
-                    android:textStyle="italic" />
+                    android:textSize="18sp" />
 
 
                 <android.support.design.widget.TextInputLayout

@@ -2,6 +2,7 @@ package com.aris.crowdreporting.Activities;
 
 import android.content.Intent;
 import android.support.annotation.NonNull;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -22,6 +23,8 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import dmax.dialog.SpotsDialog;
+
 public class RegisterActivity extends AppCompatActivity {
 
     private FirebaseAuth.AuthStateListener mAuthStateListener;
@@ -33,6 +36,7 @@ public class RegisterActivity extends AppCompatActivity {
     private EditText mName, mEmail, mPass, mPassConfirm;
     private Button mAlready;
     private ImageButton mBtnRegis;
+    private SpotsDialog dialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,7 +77,9 @@ public class RegisterActivity extends AppCompatActivity {
 
                     if (pass.equals(confirmpass)){
 
-                        mProgress.setVisibility(View.VISIBLE);
+//                        mProgress.setVisibility(View.VISIBLE);
+                        dialog = new SpotsDialog(RegisterActivity.this, "Please Wait.");
+                        dialog.show();
 
                         mAuth.createUserWithEmailAndPassword(email, pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                             @Override
@@ -81,9 +87,18 @@ public class RegisterActivity extends AppCompatActivity {
 
                                 if (task.isSuccessful()){
 
-                                    Intent setupIntent = new Intent(RegisterActivity.this, SetupActivity.class);
-                                    startActivity(setupIntent);
-                                    finish();
+                                    mAuth.getCurrentUser().sendEmailVerification()
+                                            .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                @Override
+                                                public void onComplete(@NonNull Task<Void> task) {
+                                                    if (task.isSuccessful()) {
+                                                        Intent setupIntent = new Intent(RegisterActivity.this, VerificationEmailActivity.class);
+                                                        startActivity(setupIntent);
+                                                        finish();
+
+                                                    }
+                                                }
+                                            });
 
                                 } else {
 
@@ -91,7 +106,8 @@ public class RegisterActivity extends AppCompatActivity {
                                     Toast.makeText(RegisterActivity.this, "Error ! " + errMsg, Toast.LENGTH_SHORT).show();
 
                                 }
-                                mProgress.setVisibility(View.INVISIBLE);
+//                                mProgress.setVisibility(View.INVISIBLE);
+                                dialog.dismiss();
                             }
                         });
 

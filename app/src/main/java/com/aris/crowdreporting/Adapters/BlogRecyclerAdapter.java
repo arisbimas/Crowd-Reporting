@@ -82,6 +82,7 @@ public class BlogRecyclerAdapter extends RecyclerView.Adapter<BlogRecyclerAdapte
         holder.setIsRecyclable(false);
 
         final String blogPostId = blog_list.get(position).BlogPostId;
+        final String blogUserId = blog_list.get(position).getUser_id();
         final String currentUserId = firebaseAuth.getCurrentUser().getUid();
 
         String desc_data = blog_list.get(position).getDesc();
@@ -216,7 +217,7 @@ public class BlogRecyclerAdapter extends RecyclerView.Adapter<BlogRecyclerAdapte
 
                 Intent intent = new Intent(context, DetailActivity.class);
                 intent.putExtra("blog_id",blogPostId);
-                intent.putExtra("user_id",currentUserId);
+                intent.putExtra("user_id",blogUserId);
                 intent.putExtra("imurl",image_url);
                 intent.putExtra("desc",desc_data);
 
@@ -318,7 +319,7 @@ public class BlogRecyclerAdapter extends RecyclerView.Adapter<BlogRecyclerAdapte
             public void onClick(View v) {
                 Intent intent = new Intent(context, DetailActivity.class);
                 intent.putExtra("blog_id",blogPostId);
-                intent.putExtra("user_id",currentUserId);
+                intent.putExtra("user_id",blogUserId);
                 intent.putExtra("imurl",image_url);
                 intent.putExtra("desc",desc_data);
 

@@ -69,7 +69,7 @@ public class DetailActivity extends AppCompatActivity {
     private RecyclerView comment_list;
     private CommentsRecyclerAdapter commentsRecyclerAdapter;
     private List<Comments> commentsList;
-//    private String currentUserId;
+    private String currentUserId;
 
 
     @Override
@@ -114,11 +114,11 @@ public class DetailActivity extends AppCompatActivity {
         firebaseFirestore = FirebaseFirestore.getInstance();
         firebaseAuth = FirebaseAuth.getInstance();
 
-//        currentUserId = firebaseAuth.getCurrentUser().getUid();
+        currentUserId = firebaseAuth.getCurrentUser().getUid();
 
         //GET EXTRA FROM BLOGRECVIEW
         final String blogPostId = getIntent().getStringExtra("blog_id");
-        final String currentUserId = getIntent().getStringExtra("user_id");
+        final String blogUserId = getIntent().getStringExtra("user_id");
         final String imgUrl = getIntent().getStringExtra("imurl");
         final String time = getIntent().getStringExtra("time_post");
         final String desc = getIntent().getStringExtra("desc");
@@ -220,7 +220,7 @@ public class DetailActivity extends AppCompatActivity {
         Glide.with(getApplicationContext()).applyDefaultRequestOptions(placeholderReq).load(imgUrl).into(blogImage);
 
         //Set Image User Post
-        firebaseFirestore.collection("Users").document(currentUserId).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+        firebaseFirestore.collection("Users").document(blogUserId).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
 
