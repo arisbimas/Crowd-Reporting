@@ -16,6 +16,7 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -51,7 +52,8 @@ public class DetailProfileActivity extends AppCompatActivity {
     private AppBarLayout appBarLayout;
 
     private CircularImageView profileImageV;
-    private TextView usernameV, emailV, phoneV;
+    private TextView usernameV, emailV, phoneV, emptyTxt;
+    private ImageView emptyImg;
     private Uri mainImageUri;
 
     private String user_id;
@@ -84,7 +86,7 @@ public class DetailProfileActivity extends AppCompatActivity {
 
 
         user_id = getIntent().getStringExtra("user_id");
-        Toast.makeText(this, ""+user_id, Toast.LENGTH_SHORT).show();
+//        Toast.makeText(this, ""+user_id, Toast.LENGTH_SHORT).show();
 
         // declare and initialize FrameLayout
         View frameLayout = (View)findViewById(R.id.lini);
@@ -112,6 +114,8 @@ public class DetailProfileActivity extends AppCompatActivity {
         usernameV = (TextView)findViewById(R.id.username_view);
         emailV = (TextView)findViewById(R.id.email_view);
         phoneV = (TextView)findViewById(R.id.phone_view);
+        emptyTxt = findViewById(R.id.empty);
+        emptyImg = findViewById(R.id.emptyimg);
 
         //USERNYA SIAPA
         firebaseFirestore.collection("Users").document(user_id).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -204,6 +208,10 @@ public class DetailProfileActivity extends AppCompatActivity {
                         }
                     }
 
+                } else {
+                    profileBlogListView.setVisibility(View.GONE);
+                    emptyTxt.setVisibility(View.VISIBLE);
+                    emptyImg.setVisibility(View.VISIBLE);
                 }
 
             }

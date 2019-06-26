@@ -15,6 +15,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -55,7 +56,8 @@ public class AccountFragment extends DialogFragment implements
     private final static String TAG = "PROFILE_ACTIVITY";
 
     private CircularImageView profileImageV;
-    private TextView usernameV, emailV, phoneV;
+    private TextView usernameV, emailV, phoneV, emptyTxt;
+    private ImageView emptyImg;
     private Uri mainImageUri;
 
     private String user_id;
@@ -111,6 +113,9 @@ public class AccountFragment extends DialogFragment implements
         usernameV = (TextView)view.findViewById(R.id.username_view);
         emailV = (TextView)view.findViewById(R.id.email_view);
         phoneV = (TextView)view.findViewById(R.id.phone_view);
+        emptyTxt = view.findViewById(R.id.empty);
+        emptyImg = view.findViewById(R.id.emptyimg);
+
 
         //USERNYA SIAPA
         firebaseFirestore.collection("Users").document(user_id).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -133,7 +138,11 @@ public class AccountFragment extends DialogFragment implements
 
                         RequestOptions placeholderReq = new RequestOptions();
                         placeholderReq.placeholder(R.drawable.defaultimage);
-                        Glide.with(getContext()).setDefaultRequestOptions(placeholderReq).load(image).into(profileImageV);
+                        try {
+                            Glide.with(getContext()).setDefaultRequestOptions(placeholderReq).load(image).into(profileImageV);
+                        } catch (Exception e){
+                            Log.d(TAG, e.getMessage());
+                        }
 
                     }
 
@@ -181,6 +190,10 @@ public class AccountFragment extends DialogFragment implements
                         }
                     }
 
+                } else {
+                    profileBlogListView.setVisibility(View.GONE);
+                    emptyTxt.setVisibility(View.VISIBLE);
+                    emptyImg.setVisibility(View.VISIBLE);
                 }
 
             }
@@ -242,23 +255,27 @@ public class AccountFragment extends DialogFragment implements
 
         FirebaseAuth.getInstance().signOut();
 
-        if (mGoogleApiClient.isConnected()){
-            Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(
-                    new ResultCallback<Status>() {
-                        @Override
-                        public void onResult(Status status) {
-                            mGoogleApiClient.disconnect();
-                            //mGoogleApiClient.connect();
-                            // [START_EXCLUDE]
-                            FirebaseAuth.getInstance().signOut();
-                            Intent i = new Intent(getActivity(), LoginActivity.class);
-                            i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                            startActivity(i);
-                            // [END_EXCLUDE]
-                        }
-                    });
-        } else {
-            Toast.makeText(getActivity(), "err", Toast.LENGTH_SHORT).show();
+        try {
+            if (mGoogleApiClient.isConnected()){
+                Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(
+                        new ResultCallback<Status>() {
+                            @Override
+                            public void onResult(Status status) {
+                                mGoogleApiClient.disconnect();
+                                //mGoogleApiClient.connect();
+                                // [START_EXCLUDE]
+                                FirebaseAuth.getInstance().signOut();
+                                Intent i = new Intent(getActivity(), LoginActivity.class);
+                                i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                startActivity(i);
+                                // [END_EXCLUDE]
+                            }
+                        });
+            } else {
+                Toast.makeText(getActivity(), "err", Toast.LENGTH_SHORT).show();
+            }
+        } catch (Exception e){
+            Log.d(TAG, ""+e.getMessage());
         }
 
 

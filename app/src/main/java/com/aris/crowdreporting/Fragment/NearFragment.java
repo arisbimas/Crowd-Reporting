@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
@@ -79,11 +80,12 @@ public class NearFragment extends Fragment implements GoogleApiClient.Connection
     private Boolean isFirstPageFirstLoad = true;
 
     private Location mylocation;
+    private LocationManager locationManager;
     private GoogleApiClient googleApiClient;
     private final static int REQUEST_CHECK_SETTINGS_GPS=0x1;
     private final static int REQUEST_ID_MULTIPLE_PERMISSIONS=0x2;
 
-    private ProgressDialog dialog;
+    private SpotsDialog dialog;
 
     private FusedLocationProviderClient client;
     LatLng latLng;
@@ -110,6 +112,7 @@ public class NearFragment extends Fragment implements GoogleApiClient.Connection
         firebaseAuth = FirebaseAuth.getInstance();
         client = LocationServices.getFusedLocationProviderClient(getContext());
 
+        dialog = new SpotsDialog(getContext(), "Track Your Location, Please Wait!");
 
         nearRecyclerAdapter = new NearRecyclerAdapter(near_list);
         near_list_view.setLayoutManager(new LinearLayoutManager(container.getContext()));
@@ -301,13 +304,7 @@ public class NearFragment extends Fragment implements GoogleApiClient.Connection
 //            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 //            startActivity(intent);
 
-            if(googleApiClient == null || !googleApiClient.isConnected()){
-                try {
-                    setUpGClient();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
+            setUpGClient();
 
             return true;
         }
@@ -338,7 +335,7 @@ public class NearFragment extends Fragment implements GoogleApiClient.Connection
                 .addApi(LocationServices.API)
                 .build();
         googleApiClient.connect();
-        AlertDialog dialog = new SpotsDialog(getContext(), "Track Your Location, Please Wait!");
+
         dialog.show();
     }
 
@@ -350,8 +347,10 @@ public class NearFragment extends Fragment implements GoogleApiClient.Connection
             Double latitude = mylocation.getLatitude();
             Double longitude = mylocation.getLongitude();
             nearRecyclerAdapter.notifyDataSetChanged();
-            AlertDialog dialog = new SpotsDialog(getContext(), "Track Your Location, Please Wait!");
+            Toast.makeText(getContext(), "Get Location", Toast.LENGTH_SHORT).show();
             dialog.dismiss();
+            near_list.clear();
+            firstQuery();
         }
     }
 

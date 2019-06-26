@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Activities.VerificationEmailActivity">
+
+
+    <RelativeLayout
+        android:id="@+id/r1"
+        android:layout_width="match_parent"
+        android:layout_height="250dp"
+        android:background="@color/colorPrimaryDark">
+
+        <TextView
+            android:id="@+id/please"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="50dp"
+            android:text="Please"
+            android:textSize="30dp"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:textColor="@color/putih"
+            android:fontFamily="@font/comfortaa"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/please"
+            android:layout_centerHorizontal="true"
+            android:text="Activate Your Email"
+            android:textSize="30dp"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:textColor="@color/putih"
+            android:fontFamily="@font/comfortaa"/>
+    </RelativeLayout>
+
+    <ImageView
+        android:id="@+id/icon_email"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_below="@+id/r1"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="-75dp"
+        android:src="@drawable/ic_email1"/>
+
+    <TextView
+        android:id="@+id/tv_email"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/icon_email"
+        android:layout_margin="30dp"
+        android:text="We've sent a link. Please check your email account and click the link inside"
+        android:fontFamily="@font/comfortaa"
+        android:textSize="17dp"
+        android:textColor="#000000"
+        android:gravity="center"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/linear_veri"
+        android:text='*after activate email,click "Next" button below.'
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="5dp"/>
+
+    <LinearLayout
+        android:id="@+id/linear_veri"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:weightSum="3"
+        android:orientation="horizontal"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true">
+        <Button
+            android:id="@+id/ext"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginBottom="30dp"
+            android:padding="5dp"
+            android:background="@drawable/background_rounded1"
+            android:fontFamily="@font/comfortaa"
+            android:text="Resend Link"
+            android:textAllCaps="false"
+            android:textColor="@android:color/white" />
+        <Button
+            android:id="@+id/edit_email"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginBottom="30dp"
+            android:padding="5dp"
+            android:background="@drawable/background_rounded1"
+            android:fontFamily="@font/comfortaa"
+            android:text="Edit Email"
+            android:textAllCaps="false"
+            android:textColor="@android:color/white" />
+        <Button
+            android:id="@+id/btn_next"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginBottom="30dp"
+            android:padding="5dp"
+            android:background="@drawable/background_rounded1"
+            android:fontFamily="@font/comfortaa"
+            android:text="Next!"
+            android:textAllCaps="false"
+            android:textColor="@android:color/white" />
+    </LinearLayout>
+
+
+</RelativeLayout>

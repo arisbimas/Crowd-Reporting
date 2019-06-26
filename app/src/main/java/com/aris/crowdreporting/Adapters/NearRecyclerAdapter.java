@@ -81,6 +81,7 @@ public class NearRecyclerAdapter extends RecyclerView.Adapter<NearRecyclerAdapte
 
         final String blogPostId = near_list.get(i).BlogPostId;
         final String currentUserId = firebaseAuth.getCurrentUser().getUid();
+        final String blogUserId = near_list.get(i).getUser_id();
 
         String desc_data = near_list.get(i).getDesc();
         viewHolder.setNearDescText(desc_data);
@@ -165,7 +166,7 @@ public class NearRecyclerAdapter extends RecyclerView.Adapter<NearRecyclerAdapte
             public void onClick(View v) {
                 Intent intent = new Intent(context, DetailActivity.class);
                 intent.putExtra("blog_id",blogPostId);
-                intent.putExtra("user_id",currentUserId);
+                intent.putExtra("user_id",blogUserId);
                 intent.putExtra("imurl",image_url);
                 intent.putExtra("desc",desc_data);
 
