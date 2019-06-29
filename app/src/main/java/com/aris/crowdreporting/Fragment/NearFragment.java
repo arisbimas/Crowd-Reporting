@@ -475,7 +475,12 @@ public class NearFragment extends Fragment implements GoogleApiClient.Connection
         }
     }
 
-
+    @Override
+    public void onPause() {
+        super.onPause();
+        googleApiClient.stopAutoManage(getActivity());
+        googleApiClient.disconnect();
+    }
 
 
 }

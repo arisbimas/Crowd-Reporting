@@ -15,8 +15,11 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -29,13 +32,17 @@ import com.aris.crowdreporting.R;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
 import com.mikhaellopez.circularimageview.CircularImageView;
@@ -46,6 +53,8 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Nullable;
+
+import dmax.dialog.SpotsDialog;
 
 import static android.support.constraint.Constraints.TAG;
 
@@ -189,21 +198,29 @@ public class BlogRecyclerAdapter extends RecyclerView.Adapter<BlogRecyclerAdapte
             @Override
             public void onClick(View v) {
 
+                final Animation likeAnim = AnimationUtils.loadAnimation(context,R.anim.like_animation);
+                holder.blogLikeBtn.startAnimation(likeAnim);
+
                 firebaseFirestore.collection("Posts/" + blogPostId + "/Likes").document(currentUserId).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
 
-                        if(!task.getResult().exists()){
+                        if(task.isSuccessful()){
+                            if (!task.getResult().exists()) {
+                                Map<String, Object> likesMap = new HashMap<>();
+                                likesMap.put("timestamp", FieldValue.serverTimestamp());
 
-                            Map<String, Object> likesMap = new HashMap<>();
-                            likesMap.put("timestamp", FieldValue.serverTimestamp());
-
-                            firebaseFirestore.collection("Posts/" + blogPostId + "/Likes").document(currentUserId).set(likesMap);
+                                firebaseFirestore.collection("Posts/" + blogPostId + "/Likes").document(currentUserId).set(likesMap);
+                            } else {
+                                firebaseFirestore.collection("Posts/" + blogPostId + "/Likes").document(currentUserId).delete();
+                                //coba
+                            }
 
                         } else {
 
-                            firebaseFirestore.collection("Posts/" + blogPostId + "/Likes").document(currentUserId).delete();
-                            //coba
+                            Log.i("LikeError", task.getException().getMessage());
+                            Toast.makeText(context, "Please check your connection", Toast.LENGTH_SHORT).show();
+
                         }
 
                     }
@@ -284,21 +301,54 @@ public class BlogRecyclerAdapter extends RecyclerView.Adapter<BlogRecyclerAdapte
                         switch (item.getItemId()) {
                             case R.id.report:
 
+                                holder.spotsDialog = new SpotsDialog(context, "Please Wait.");
+                                holder.spotsDialog.show();
+
                                 //Lapor Feature
-                                firebaseFirestore.collection("Posts").document(blogPostId + "reports").get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                CollectionReference collectionReference = firebaseFirestore.collection("Posts");
+                                collectionReference.document(blogPostId + "/PostHoax/" + currentUserId).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                                     @Override
                                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                        if (!task.getResult().exists()){
+                                        if (task.getResult().exists()){
+
+                                            holder.spotsDialog.dismiss();
+                                            Toast.makeText(context, "You has been reported this post!", Toast.LENGTH_SHORT).show();
+
+                                        } else {
                                             Map<String, Object> reportsMap = new HashMap<>();
-                                            reportsMap.put("desc", "");
+//                                            reportsMap.put("desc", " ");
                                             reportsMap.put("reports", "true");
 
-                                            firebaseFirestore.collection("Posts").document(blogPostId).set(reportsMap, SetOptions.merge());
-                                            Toast.makeText(context, "Thanks for repoting this post..", Toast.LENGTH_SHORT).show();
-                                            holder.hideItem.setVisibility(View.VISIBLE);
-                                            
-                                        } else {
-                                            Toast.makeText(context, "Anda telah melaporkan post ini!", Toast.LENGTH_SHORT).show();
+                                            //cara 1
+//                                            firebaseFirestore.collection("Posts").document(blogPostId).set(reportsMap, SetOptions.merge());
+
+                                            //cara 2
+                                            collectionReference.document(blogPostId).collection("PostHoax").document(currentUserId)
+                                                    .set(reportsMap).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                @Override
+                                                public void onSuccess(Void aVoid) {
+                                                    holder.spotsDialog.dismiss();
+                                                    Toast.makeText(context, "Thanks for reported this post..", Toast.LENGTH_SHORT).show();
+                                                    holder.hideItem.setVisibility(View.VISIBLE);
+                                                    blog_list.remove(position);
+
+                                                    Query query = collectionReference.document(blogPostId).collection("PostHoax");
+                                                    query.addSnapshotListener(new EventListener<QuerySnapshot>() {
+                                                        @Override
+                                                        public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
+                                                            if (queryDocumentSnapshots.size() > 3){
+                                                                firebaseFirestore.collection("Posts").document(blogPostId).set(reportsMap, SetOptions.merge());
+                                                            }
+                                                        }
+                                                    });
+                                                }
+                                            }).addOnFailureListener(new OnFailureListener() {
+                                                @Override
+                                                public void onFailure(@NonNull Exception e) {
+                                                    holder.spotsDialog.dismiss();
+                                                    Toast.makeText(context, ""+e.getMessage(), Toast.LENGTH_SHORT).show();
+                                                }
+                                            });
                                         }
                                     }
                                 });
@@ -368,13 +418,15 @@ public class BlogRecyclerAdapter extends RecyclerView.Adapter<BlogRecyclerAdapte
         private CircularImageView blogUserImage;
 
         private ImageView blogLikeBtn, popUpHome;
-        private TextView blogLikeCount, hideItem;
+        private TextView blogLikeCount;
+        private LinearLayout hideItem;
 
         private ImageView blogCommentBtn;
 
         private Button deleteBtn, viewProfileBtn;
 
         private Dialog mDialog;
+        private SpotsDialog spotsDialog;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -387,6 +439,7 @@ public class BlogRecyclerAdapter extends RecyclerView.Adapter<BlogRecyclerAdapte
             popUpHome = mView.findViewById(R.id.popup_home);
             blogUserName = mView.findViewById(R.id.blog_username);
             blogUserImage = mView.findViewById(R.id.blog_user_image);
+
 
             mDialog = new Dialog(context);
             mDialog.setContentView(R.layout.popup_detail_profile);

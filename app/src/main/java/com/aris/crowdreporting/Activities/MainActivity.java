@@ -21,7 +21,7 @@ import android.widget.Toast;
 import com.aris.crowdreporting.Fragment.AccountFragment;
 import com.aris.crowdreporting.Fragment.HomeFragment;
 import com.aris.crowdreporting.Fragment.NearFragment;
-import com.aris.crowdreporting.Fragment.TestFragment;
+import com.aris.crowdreporting.Fragment.ChatsFragment;
 import com.aris.crowdreporting.R;
 import com.firebase.client.Firebase;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -192,8 +192,8 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
             case R.id.nav_account:
                 fragment = new AccountFragment();
                 break;
-            case R.id.nav_notiif:
-                fragment = new TestFragment();
+            case R.id.nav_chats:
+                fragment = new ChatsFragment();
                 break;
         }
         return loadFragment(fragment);

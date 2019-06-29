@@ -11,13 +11,15 @@
         android:title="Near Me" />
 
     <item
+        android:id="@+id/nav_chats"
+        android:icon="@android:drawable/sym_action_chat"
+        android:title="Chats" />
+
+    <item
         android:id="@+id/nav_account"
         android:icon="@drawable/baseline_account_circle_white_24"
         android:title="Account" />
-    <item
-        android:id="@+id/nav_notiif"
-        android:icon="@drawable/baseline_notifications_active_24"
-        android:title="Notification" />
+
 
     <!--<item android:id="@+id/navigation_setting"-->
         <!--android:title="Setting"-->

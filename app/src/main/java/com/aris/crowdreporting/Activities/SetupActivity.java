@@ -58,6 +58,8 @@ public class SetupActivity extends AppCompatActivity {
     private FirebaseAuth firebaseAuth;
     private FirebaseFirestore firebaseFirestore;
 
+    private SpotsDialog dialog;
+
     private static final int READCODE = 1;
     private static final int WRITECODE = 2;
 
@@ -81,7 +83,7 @@ public class SetupActivity extends AppCompatActivity {
 //        setupProgress = (ProgressBar)findViewById(R.id.progressBar);
 
 //        setupProgress.setVisibility(View.VISIBLE);
-        AlertDialog dialog = new SpotsDialog(SetupActivity.this);
+        dialog = new SpotsDialog(SetupActivity.this);
         dialog.show();
 
         setupBtn.setEnabled(false);
@@ -228,7 +230,7 @@ public class SetupActivity extends AppCompatActivity {
 
     private void storeFirestore(@NonNull Task<Uri> task, String username, String emailuser_id, String phone) {
 
-        AlertDialog dialog = new SpotsDialog(SetupActivity.this);
+        SpotsDialog dialog = new SpotsDialog(SetupActivity.this);
 
         Uri downloadUri;
 

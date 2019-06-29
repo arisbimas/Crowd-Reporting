@@ -1,20 +1,24 @@
 package com.aris.crowdreporting.Fragment;
 
 import android.app.ProgressDialog;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.aris.crowdreporting.HelperClasses.Blog;
 import com.aris.crowdreporting.Adapters.BlogRecyclerAdapter;
 import com.aris.crowdreporting.R;
 import com.aris.crowdreporting.HelperClasses.User;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
@@ -34,6 +38,8 @@ import static android.support.constraint.Constraints.TAG;
 
 
 public class HomeFragment extends Fragment {
+
+    SwipeRefreshLayout pullToRefresh;
 
     private RecyclerView blog_list_view;
     private List<Blog> blog_list;
@@ -63,6 +69,9 @@ public class HomeFragment extends Fragment {
         user_list = new ArrayList<>();
 
         blog_list_view = view.findViewById(R.id.blog_list_view);
+        pullToRefresh = view.findViewById(R.id.pull);
+
+        pullToRefresh.setColorSchemeColors(Color.CYAN, Color.YELLOW, Color.MAGENTA);
 
         firebaseAuth = FirebaseAuth.getInstance();
 
@@ -95,7 +104,11 @@ public class HomeFragment extends Fragment {
                 }
             });
 
-            Query firstQuery = firebaseFirestore.collection("Posts");
+            String s = "lapor";
+
+            CollectionReference collectionReference = firebaseFirestore.collection("Posts");
+
+            Query firstQuery = collectionReference.whereEqualTo("reports", "false");
             firstQuery.addSnapshotListener(getActivity(), new EventListener<QuerySnapshot>() {
                 @Override
                 public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
@@ -134,6 +147,7 @@ public class HomeFragment extends Fragment {
                                     blogRecyclerAdapter.notifyItemInserted(blog_list.size());
                                     blogRecyclerAdapter.notifyDataSetChanged();
 
+
                                 } else {
 
                                     blog_list.add(0, blogPost);
@@ -159,6 +173,14 @@ public class HomeFragment extends Fragment {
 
                 }
 
+            });
+
+            pullToRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+                @Override
+                public void onRefresh() {
+                    blogRecyclerAdapter.notifyDataSetChanged();
+                    pullToRefresh.setRefreshing(false);
+                }
             });
 
         }

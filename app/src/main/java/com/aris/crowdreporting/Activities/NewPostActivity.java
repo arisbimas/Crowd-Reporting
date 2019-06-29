@@ -592,4 +592,11 @@ public class NewPostActivity extends AppCompatActivity implements GoogleApiClien
         }
     }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        googleApiClient.stopAutoManage(this);
+        googleApiClient.disconnect();
+    }
+
 }
