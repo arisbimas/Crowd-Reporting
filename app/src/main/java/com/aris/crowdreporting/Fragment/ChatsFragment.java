@@ -9,26 +9,37 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.aris.crowdreporting.Activities.VerificationEmailActivity;
+import com.aris.crowdreporting.HelperUtils.Status;
 import com.aris.crowdreporting.R;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class ChatsFragment extends DialogFragment {
 
-    private final static String TAG = "PROFILE_ACTIVITY";
+    private final static String TAG = "CHATS_ACTIVITY";
 
     private EditText editTextTest;
     private Button btnTest;
     private TabLayout tabLayout;
     private ViewPager viewPager;
     private FragmentManager fragmentManager;
+
+    private FirebaseFirestore firebaseFirestore;
+
+    private Status status;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -84,6 +95,21 @@ public class ChatsFragment extends DialogFragment {
     }
 
 
-    
+    @Override
+    public void onResume() {
+        super.onResume();
+        status = new Status("online");
+    }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        status = new Status("offline");
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        status = new Status("offline");
+    }
 }

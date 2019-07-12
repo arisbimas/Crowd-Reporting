@@ -50,7 +50,14 @@ dependencies {
     implementation 'com.google.firebase:firebase-auth:16.1.0'
     implementation 'com.google.firebase:firebase-crash:16.2.1'
     implementation 'com.google.firebase:firebase-firestore:17.1.0'
-    implementation 'com.firebaseui:firebase-ui-auth:3.2.2'
+//    implementation 'com.firebaseui:firebase-ui-auth:3.2.2'
+    // FirebaseUI for Firebase Realtime Database
+//    implementation 'com.firebaseui:firebase-ui-database:5.0.0'
+//
+//    // FirebaseUI for Cloud Firestore
+//    implementation 'com.firebaseui:firebase-ui-firestore:5.0.0'
+//    implementation 'com.firebaseui:firebase-ui-auth:5.0.0'
+
 
 
     implementation 'de.hdodenhof:circleimageview:2.2.0'
@@ -67,7 +74,6 @@ dependencies {
     implementation 'com.mikhaellopez:circularimageview:3.2.0'
 //    implementation 'com.chootdev:timezago:1.1.8'
     implementation 'com.rengwuxian.materialedittext:library:2.1.4'
-
 
 
     //gambar bergerak

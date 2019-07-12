@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="300dp"
+    android:layout_height="wrap_content"
+    android:padding="8dp">
+
+    <!--<de.hdodenhof.circleimageview.CircleImageView-->
+        <!--android:id="@+id/profile_chat_img"-->
+        <!--android:layout_width="40dp"-->
+        <!--android:layout_height="40dp"-->
+        <!--android:src="@drawable/profile_placeholder" />-->
+
+    <TextView
+        android:id="@+id/show_msg"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginVertical="3dp"
+        android:layout_marginStart="5dp"
+        android:layout_toRightOf="@+id/profile_chat_img"
+        android:background="@drawable/background_left"
+        android:padding="8dp"
+        android:text="helo"
+        android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/time_msg"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_toRightOf="@+id/show_msg"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="2dp"
+        android:text="00:00"
+        android:textSize="12sp"
+        android:textColor="#a0a0a0"/>
+
+    <TextView
+        android:id="@+id/txt_seen"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/show_msg"
+        android:visibility="gone" />
+</RelativeLayout>

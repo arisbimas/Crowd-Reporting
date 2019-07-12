@@ -22,6 +22,7 @@ import android.widget.Toast;
 
 import com.aris.crowdreporting.Adapters.MyPhotoRecyclerAdapter;
 import com.aris.crowdreporting.HelperClasses.Blog;
+import com.aris.crowdreporting.HelperUtils.Status;
 import com.aris.crowdreporting.R;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
@@ -227,5 +228,24 @@ public class DetailProfileActivity extends AppCompatActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private Status status;
+    @Override
+    public void onResume() {
+        super.onResume();
+        status = new Status("online");
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        status = new Status("offline");
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        status = new Status("offline");
     }
 }

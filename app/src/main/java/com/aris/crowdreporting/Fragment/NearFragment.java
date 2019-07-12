@@ -92,6 +92,8 @@ public class NearFragment extends Fragment implements GoogleApiClient.Connection
 
     private Date cDate;
 
+    private com.aris.crowdreporting.HelperUtils.Status status;
+
     public NearFragment() {
         // Required empty public constructor
     }
@@ -324,6 +326,7 @@ public class NearFragment extends Fragment implements GoogleApiClient.Connection
         if (googleApiClient != null && googleApiClient.isConnected()) {
             googleApiClient.stopAutoManage((FragmentActivity) getActivity());
             googleApiClient.disconnect();
+            status = new com.aris.crowdreporting.HelperUtils.Status("offline");
         }
     }
 
@@ -478,9 +481,18 @@ public class NearFragment extends Fragment implements GoogleApiClient.Connection
     @Override
     public void onPause() {
         super.onPause();
-        googleApiClient.stopAutoManage(getActivity());
-        googleApiClient.disconnect();
+
+        if (googleApiClient != null){
+            googleApiClient.stopAutoManage(getActivity());
+            googleApiClient.disconnect();
+            status = new com.aris.crowdreporting.HelperUtils.Status("offline");
+
+        }
     }
 
-
+    @Override
+    public void onResume() {
+        super.onResume();
+        status = new com.aris.crowdreporting.HelperUtils.Status("online");
+    }
 }

@@ -20,6 +20,7 @@ import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.aris.crowdreporting.Activities.MessageActivity;
 import com.aris.crowdreporting.HelperClasses.Blog;
 import com.aris.crowdreporting.Activities.LoginActivity;
 import com.aris.crowdreporting.Adapters.MyPhotoRecyclerAdapter;
@@ -46,6 +47,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.mikhaellopez.circularimageview.CircularImageView;
+
 
 import java.util.ArrayList;
 import java.util.List;
@@ -79,6 +81,7 @@ public class AccountFragment extends DialogFragment implements
     private final static int REQUEST_CHECK_SETTINGS_GPS=0x1;
     private final static int REQUEST_ID_MULTIPLE_PERMISSIONS=0x2;
 
+    private com.aris.crowdreporting.HelperUtils.Status getstatus;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -220,6 +223,10 @@ public class AccountFragment extends DialogFragment implements
                                 Intent intent = new Intent(getActivity(), SetupActivity.class);
                                 startActivity(intent);
                                 return true;
+                            case R.id.cht:
+                                Intent intentCht = new Intent(getActivity(), MessageActivity.class);
+                                startActivity(intentCht);
+                                return true;
                             default:
                                 return false;
                         }
@@ -266,7 +273,7 @@ public class AccountFragment extends DialogFragment implements
                                 // [START_EXCLUDE]
                                 FirebaseAuth.getInstance().signOut();
                                 Intent i = new Intent(getActivity(), LoginActivity.class);
-                                i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
                                 startActivity(i);
                                 // [END_EXCLUDE]
                             }
@@ -284,6 +291,24 @@ public class AccountFragment extends DialogFragment implements
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
 
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        getstatus = new com.aris.crowdreporting.HelperUtils.Status("online");
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        getstatus = new  com.aris.crowdreporting.HelperUtils.Status("offline");
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        getstatus = new  com.aris.crowdreporting.HelperUtils.Status("offline");
     }
 
 

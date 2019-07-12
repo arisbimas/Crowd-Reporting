@@ -15,8 +15,10 @@ import android.widget.Toast;
 
 import com.aris.crowdreporting.HelperClasses.Blog;
 import com.aris.crowdreporting.Adapters.BlogRecyclerAdapter;
+import com.aris.crowdreporting.HelperUtils.Status;
 import com.aris.crowdreporting.R;
 import com.aris.crowdreporting.HelperClasses.User;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentChange;
@@ -30,6 +32,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 
 import dmax.dialog.SpotsDialog;
@@ -54,6 +57,9 @@ public class HomeFragment extends Fragment {
 
     private SpotsDialog dialog;
     private String user_id;
+
+    private Status status;
+
     public HomeFragment() {
         // Required empty public constructor
     }
@@ -67,6 +73,8 @@ public class HomeFragment extends Fragment {
 
         blog_list = new ArrayList<>();
         user_list = new ArrayList<>();
+
+
 
         blog_list_view = view.findViewById(R.id.blog_list_view);
         pullToRefresh = view.findViewById(R.id.pull);
@@ -230,5 +238,24 @@ public class HomeFragment extends Fragment {
 //        }
 //
 //    }
+
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        status = new Status("online");
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        status = new Status("offline");
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        status = new Status("offline");
+    }
 
 }

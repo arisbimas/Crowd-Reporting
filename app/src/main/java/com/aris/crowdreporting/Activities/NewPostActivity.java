@@ -380,6 +380,8 @@ public class NewPostActivity extends AppCompatActivity implements GoogleApiClien
 
                                                 } else {
 
+                                                    Toast.makeText(NewPostActivity.this, ""+task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+
                                                 }
 
 //                                                progressBar.setVisibility(View.INVISIBLE);

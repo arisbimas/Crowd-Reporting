@@ -158,7 +158,7 @@ public class SetupActivity extends AppCompatActivity {
                             public void onComplete(@NonNull Task<Uri> task) {
                                 if (task.isSuccessful()) {
 
-                                    storeFirestore(task, username, emailuser_id, phone);
+                                    storeFirestore(task, user_id, username, emailuser_id, phone);
 
                                 } else {
 
@@ -173,7 +173,7 @@ public class SetupActivity extends AppCompatActivity {
 
                     }else {
 
-                        storeFirestore(null, username, emailuser_id, phone);
+                        storeFirestore(null, user_id, username, emailuser_id, phone);
 
                     }
                 } else if (mainImageUri == null){
@@ -228,7 +228,7 @@ public class SetupActivity extends AppCompatActivity {
 
     }
 
-    private void storeFirestore(@NonNull Task<Uri> task, String username, String emailuser_id, String phone) {
+    private void storeFirestore(@NonNull Task<Uri> task,String user_id,  String username, String emailuser_id, String phone) {
 
         SpotsDialog dialog = new SpotsDialog(SetupActivity.this);
 
@@ -245,10 +245,13 @@ public class SetupActivity extends AppCompatActivity {
         }
 
         Map<String, String> userMap = new HashMap<>();
+
+        userMap.put("user_id" , user_id);
         userMap.put("name" , username);
         userMap.put("email" , emailuser_id);
         userMap.put("phone" , phone);
         userMap.put("image", downloadUri.toString());
+        userMap.put("status", "offline");
 
         firebaseFirestore.collection("Users").document(user_id).set(userMap).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override

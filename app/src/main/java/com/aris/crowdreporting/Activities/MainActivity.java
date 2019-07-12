@@ -22,9 +22,11 @@ import com.aris.crowdreporting.Fragment.AccountFragment;
 import com.aris.crowdreporting.Fragment.HomeFragment;
 import com.aris.crowdreporting.Fragment.NearFragment;
 import com.aris.crowdreporting.Fragment.ChatsFragment;
+import com.aris.crowdreporting.HelperUtils.Status;
 import com.aris.crowdreporting.R;
 import com.firebase.client.Firebase;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -38,6 +40,7 @@ import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.PermissionRequestErrorListener;
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 
+import java.util.HashMap;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener {
@@ -50,6 +53,8 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     private Toolbar main_toolbar;
 
     private String current_user_id;
+
+    private Status status;
 
 
     @Override
@@ -261,4 +266,21 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
 
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        status = new Status("online");
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        status = new Status("offline");
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        status = new Status("offline");
+    }
 }

@@ -29,7 +29,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".Activities.ReAuthEmailActivity"></activity>
+        <activity android:name=".Activities.MessageActivity"></activity>
+        <activity android:name=".Activities.ReAuthEmailActivity" />
         <activity android:name=".Activities.VerificationEmailActivity" />
         <activity android:name=".Activities.DetailProfileActivity" />
         <activity android:name=".Activities.DetailActivity" />
