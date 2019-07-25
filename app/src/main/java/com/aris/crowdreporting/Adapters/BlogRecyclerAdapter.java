@@ -316,13 +316,8 @@ public class BlogRecyclerAdapter extends RecyclerView.Adapter<BlogRecyclerAdapte
 
                                         } else {
                                             Map<String, Object> reportsMap = new HashMap<>();
-//                                            reportsMap.put("desc", " ");
                                             reportsMap.put("reports", "true");
 
-                                            //cara 1
-//                                            firebaseFirestore.collection("Posts").document(blogPostId).set(reportsMap, SetOptions.merge());
-
-                                            //cara 2
                                             collectionReference.document(blogPostId).collection("PostHoax").document(currentUserId)
                                                     .set(reportsMap).addOnSuccessListener(new OnSuccessListener<Void>() {
                                                 @Override

@@ -190,33 +190,35 @@ public class VPUsersChatFragment extends Fragment {
             }
         });
 
-//        txtSearchUsers.addTextChangedListener(new TextWatcher() {
-//            @Override
-//            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-//
-//            }
-//
-//            @Override
-//            public void onTextChanged(CharSequence s, int start, int before, int count) {
-//
-//                searchUsers(s.toString());
-//
-//            }
-//
-//            @Override
-//            public void afterTextChanged(Editable s) {
-//
-//            }
-//        });
+        txtSearchUsers.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                searchUsers(s.toString());
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
 
         // Inflate the layout for this fragment
         return view;
     }
 
-    private void searchUsers(String strng) {
+    private void searchUsers(String s) {
 
         FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
-        Query query = firebaseFirestore.collection("Users").orderBy("name");
+        Query query = firebaseFirestore.collection("Users").orderBy("name", Query.Direction.ASCENDING)
+                .startAt(s)
+                .endAt(s+"\uf8ff");
 
         query.addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override

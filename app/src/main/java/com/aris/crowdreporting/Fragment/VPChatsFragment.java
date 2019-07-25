@@ -18,6 +18,7 @@ import com.aris.crowdreporting.HelperClasses.Chatlist;
 import com.aris.crowdreporting.HelperClasses.Chats;
 import com.aris.crowdreporting.HelperClasses.Comments;
 import com.aris.crowdreporting.HelperClasses.User;
+import com.aris.crowdreporting.Notifications.Token;
 import com.aris.crowdreporting.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -34,6 +35,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.iid.FirebaseInstanceId;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -92,9 +94,18 @@ public class VPChatsFragment extends Fragment {
             }
         });
 
+        updateToken(FirebaseInstanceId.getInstance().getToken());
+
 
 
         return view;
+    }
+
+    private void updateToken(String token){
+        DocumentReference documentReference = FirebaseFirestore.getInstance().collection("Tokens").document(firebaseUser.getUid());
+
+        Token token1 = new Token(token);
+        documentReference.set(token1);
     }
 
     private void chatList() {

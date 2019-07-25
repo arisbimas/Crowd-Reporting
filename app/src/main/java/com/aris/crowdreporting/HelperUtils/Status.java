@@ -26,7 +26,7 @@ public class Status {
             @Override
             public void onSuccess(Void aVoid) {
 //                Toast.makeText(MessageActivity.this, "online", Toast.LENGTH_SHORT).show();
-                Log.d(TAG, "USER ONLINE");
+                Log.d("STATUSUSER", "USER ONLINE");
             }
         });
 

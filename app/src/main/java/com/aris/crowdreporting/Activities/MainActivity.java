@@ -66,7 +66,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
 
         main_toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(main_toolbar);
-        getSupportActionBar().setTitle("Crowd Reporting");
+        getSupportActionBar().setTitle("Crowdsourcing");
 
         Firebase.setAndroidContext(this);
         mAuth = FirebaseAuth.getInstance();
@@ -275,7 +275,9 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     @Override
     public void onPause() {
         super.onPause();
-        status = new Status("offline");
+        if (mAuth.getCurrentUser().getUid() != null) {
+            status = new Status("offline");
+        }
     }
 
     @Override

@@ -11,9 +11,12 @@ import android.graphics.PorterDuff;
 import android.location.Location;
 
 import com.aris.crowdreporting.R;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationListener;
 
 import android.net.Uri;
+import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -37,12 +40,14 @@ import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResult;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
@@ -67,7 +72,7 @@ import dmax.dialog.SpotsDialog;
 
 public class NewPostActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
-        LocationListener{
+        LocationListener {
 
     private ImageButton mSelectImage;
     private EditText mLati, mLongi;
@@ -87,10 +92,12 @@ public class NewPostActivity extends AppCompatActivity implements GoogleApiClien
 
     private Location mylocation;
     private GoogleApiClient googleApiClient;
-    private final static int REQUEST_CHECK_SETTINGS_GPS=0x1;
-    private final static int REQUEST_ID_MULTIPLE_PERMISSIONS=0x2;
+    private final static int REQUEST_CHECK_SETTINGS_GPS = 0x1;
+    private final static int REQUEST_ID_MULTIPLE_PERMISSIONS = 0x2;
+    private FusedLocationProviderClient fusedLocationClient;
 
-    private AlertDialog dialog;
+    private SpotsDialog dialog;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -107,16 +114,16 @@ public class NewPostActivity extends AppCompatActivity implements GoogleApiClien
         firebaseFirestore = FirebaseFirestore.getInstance();
         firebaseAuth = FirebaseAuth.getInstance();
 
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+
         current_user_id = firebaseAuth.getCurrentUser().getUid();
 
-        mSelectImage = (ImageButton)findViewById(R.id.post_image);
-        mLati = (EditText)findViewById(R.id.post_lati);
-        mLongi = (EditText)findViewById(R.id.post_longi);
-        mDesc = (EditText)findViewById(R.id.post_desc);
+        mSelectImage = (ImageButton) findViewById(R.id.post_image);
+        mLati = (EditText) findViewById(R.id.post_lati);
+        mLongi = (EditText) findViewById(R.id.post_longi);
+        mDesc = (EditText) findViewById(R.id.post_desc);
 
-//        progressBar = (ProgressBar)findViewById(R.id.new_post_progress);
         dialog = new SpotsDialog(NewPostActivity.this, "Track Your Location");
-
 
         mSelectImage.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -159,7 +166,7 @@ public class NewPostActivity extends AppCompatActivity implements GoogleApiClien
             String longitude = mLongi.getText().toString();
             String desc = mDesc.getText().toString().toLowerCase();
 
-            if (!TextUtils.isEmpty(latitude) && !TextUtils.isEmpty(longitude) && !TextUtils.isEmpty(desc) && postImageUri != null && desc.contains("bekasi")){
+            if (!TextUtils.isEmpty(latitude) && !TextUtils.isEmpty(longitude) && !TextUtils.isEmpty(desc) && postImageUri != null) {
 
 //                progressBar.setVisibility(View.VISIBLE);
                 dialog.show();
@@ -187,7 +194,7 @@ public class NewPostActivity extends AppCompatActivity implements GoogleApiClien
 
 
                             try {
-                                File imageZipperFile=new ImageZipper(NewPostActivity.this)
+                                File imageZipperFile = new ImageZipper(NewPostActivity.this)
                                         .setQuality(10)
                                         .setMaxWidth(200)
                                         .setMaxHeight(200)
@@ -196,7 +203,7 @@ public class NewPostActivity extends AppCompatActivity implements GoogleApiClien
                                 e.printStackTrace();
                             }
                             try {
-                                 imageBitmap =new ImageZipper(NewPostActivity.this).compressToBitmap(newImageFile);
+                                imageBitmap = new ImageZipper(NewPostActivity.this).compressToBitmap(newImageFile);
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
@@ -246,7 +253,7 @@ public class NewPostActivity extends AppCompatActivity implements GoogleApiClien
                                             @Override
                                             public void onComplete(@NonNull Task<DocumentReference> task) {
 
-                                                if (task.isSuccessful()){
+                                                if (task.isSuccessful()) {
 
                                                     Toast.makeText(NewPostActivity.this, "Post was Added", Toast.LENGTH_SHORT).show();
                                                     Intent mainIntent = new Intent(NewPostActivity.this, MainActivity.class);
@@ -282,140 +289,13 @@ public class NewPostActivity extends AppCompatActivity implements GoogleApiClien
                     }
                 });
 
-            }
-            //JIKA TIDAK ADA KATA BEKASI
-            else if (!TextUtils.isEmpty(latitude) && !TextUtils.isEmpty(longitude) && !TextUtils.isEmpty(desc) && postImageUri != null && !desc.contains("bekasi")){
-
-//                progressBar.setVisibility(View.VISIBLE);
-                dialog.show();
-
-                String randomName = UUID.randomUUID().toString();
-
-                StorageReference file_path = storageReference.child("post_image_trash").child(randomName + ".jpg");
-                UploadTask uploadTask = file_path.putFile(postImageUri);
-                Task<Uri> urlTask = uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
-                    @Override
-                    public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
-                        if (!task.isSuccessful()) {
-                            throw task.getException();
-                        }
-
-                        // Continue with the task to get the download URL
-                        return file_path.getDownloadUrl();
-                    }
-                }).addOnCompleteListener(new OnCompleteListener<Uri>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Uri> task) {
-                        if (task.isSuccessful()) {
-
-                            File newImageFile = new File(postImageUri.getPath());
-
-
-                            try {
-                                File imageZipperFile=new ImageZipper(NewPostActivity.this)
-                                        .setQuality(10)
-                                        .setMaxWidth(200)
-                                        .setMaxHeight(200)
-                                        .compressToFile(newImageFile);
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
-                            try {
-                                imageBitmap =new ImageZipper(NewPostActivity.this).compressToBitmap(newImageFile);
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
-
-
-                            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                            imageBitmap.compress(Bitmap.CompressFormat.JPEG, 80, baos);
-                            byte[] thumbData = baos.toByteArray();
-
-                            final StorageReference ref = storageReference.child("post_image_trash/thumbs").child(randomName + ".jpg");
-                            UploadTask uploadTask = ref.putBytes(thumbData);
-
-                            Task<Uri> urlTask = uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
-                                @Override
-                                public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
-                                    if (!task.isSuccessful()) {
-                                        throw task.getException();
-                                    }
-
-                                    // Continue with the task to get the download URL
-                                    return ref.getDownloadUrl();
-                                }
-                            }).addOnCompleteListener(new OnCompleteListener<Uri>() {
-                                @Override
-                                public void onComplete(@NonNull Task<Uri> taskThumb) {
-                                    if (taskThumb.isSuccessful()) {
-                                        Uri downloadUri = task.getResult();
-                                        Uri downloadUriThumb = taskThumb.getResult();
-                                        String imageUri = downloadUri.toString();
-                                        String imageUriThumb = downloadUriThumb.toString();
-                                        String lati = latitude.toString();
-                                        String longi = longitude.toString();
-                                        String des = desc.toString();
-
-
-                                        Map<String, Object> postMap = new HashMap<>();
-                                        postMap.put("image_uri", imageUri);
-                                        postMap.put("image_thumb", imageUriThumb);
-                                        postMap.put("latitude", lati);
-                                        postMap.put("longitude", longi);
-                                        postMap.put("desc", des);
-                                        postMap.put("user_id", current_user_id);
-                                        postMap.put("timestamp", FieldValue.serverTimestamp());
-                                        postMap.put("reports", "false");
-
-                                        firebaseFirestore.collection("PostsTrash").add(postMap).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
-                                            @Override
-                                            public void onComplete(@NonNull Task<DocumentReference> task) {
-
-                                                if (task.isSuccessful()){
-
-                                                    Toast.makeText(NewPostActivity.this, "Post was Added", Toast.LENGTH_SHORT).show();
-                                                    Intent mainIntent = new Intent(NewPostActivity.this, MainActivity.class);
-                                                    startActivity(mainIntent);
-                                                    finish();
-
-                                                } else {
-
-                                                    Toast.makeText(NewPostActivity.this, ""+task.getException().getMessage(), Toast.LENGTH_SHORT).show();
-
-                                                }
-
-//                                                progressBar.setVisibility(View.INVISIBLE);
-                                                dialog.dismiss();
-
-                                            }
-                                        });
-
-                                    } else {
-                                        // Handle failures
-                                        // ...
-                                    }
-                                }
-                            });
-
-
-                        } else {
-
-                            String errMsg = task.getException().getMessage();
-                            Toast.makeText(NewPostActivity.this, "Image Error " + errMsg, Toast.LENGTH_SHORT).show();
-
-//                            progressBar.setVisibility(View.INVISIBLE);
-                            dialog.dismiss();
-                        }
-                    }
-                });
-
-            } else if (TextUtils.isEmpty(latitude)){
+            } else if (TextUtils.isEmpty(latitude)) {
                 Toast.makeText(NewPostActivity.this, "Lokasi Tidak Terditeksi", Toast.LENGTH_SHORT).show();
-            } else if (TextUtils.isEmpty(longitude)){
+            } else if (TextUtils.isEmpty(longitude)) {
                 Toast.makeText(NewPostActivity.this, "Lokasi Tidak Terditeksi", Toast.LENGTH_SHORT).show();
-            } else if (TextUtils.isEmpty(desc)){
+            } else if (TextUtils.isEmpty(desc)) {
                 Toast.makeText(NewPostActivity.this, "Deskripsi harus diisi!", Toast.LENGTH_SHORT).show();
-            } else if (postImageUri == null){
+            } else if (postImageUri == null) {
                 Toast.makeText(NewPostActivity.this, "Harus disertakan Foto", Toast.LENGTH_SHORT).show();
             }
 
@@ -441,10 +321,10 @@ public class NewPostActivity extends AppCompatActivity implements GoogleApiClien
     public void onLocationChanged(Location location) {
         mylocation = location;
         if (mylocation != null) {
-            Double latitude=mylocation.getLatitude();
-            Double longitude=mylocation.getLongitude();
-            mLati.setText(""+latitude);
-            mLongi.setText(""+longitude);
+            Double latitude = mylocation.getLatitude();
+            Double longitude = mylocation.getLongitude();
+            mLati.setText("" + latitude);
+            mLongi.setText("" + longitude);
             //Or Do whatever you want with your location
             dialog.dismiss();
 
@@ -461,20 +341,23 @@ public class NewPostActivity extends AppCompatActivity implements GoogleApiClien
     public void onConnectionSuspended(int i) {
         //Do whatever you need
         //You can display a message here
+        Toast.makeText(this, "Connection Failed", Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
         //You can display a message here
+        Toast.makeText(this, "Connection Failed", Toast.LENGTH_SHORT).show();
     }
 
-    private void getMyLocation(){
-        if(googleApiClient!=null) {
+    private void getMyLocation() {
+        if (googleApiClient != null) {
             if (googleApiClient.isConnected()) {
                 int permissionLocation = ContextCompat.checkSelfPermission(NewPostActivity.this,
                         Manifest.permission.ACCESS_FINE_LOCATION);
                 if (permissionLocation == PackageManager.PERMISSION_GRANTED) {
-                    mylocation =                     LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
+
+                    mylocation = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
                     LocationRequest locationRequest = new LocationRequest();
                     locationRequest.setInterval(3000);
                     locationRequest.setFastestInterval(3000);
@@ -482,8 +365,14 @@ public class NewPostActivity extends AppCompatActivity implements GoogleApiClien
                     LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder()
                             .addLocationRequest(locationRequest);
                     builder.setAlwaysShow(true);
-                    LocationServices.FusedLocationApi
-                            .requestLocationUpdates(googleApiClient, locationRequest, this);
+                    LocationServices.getFusedLocationProviderClient(this).requestLocationUpdates(locationRequest, new LocationCallback() {
+                        @Override
+                        public void onLocationResult(LocationResult locationResult) {
+                            // do work here
+                            onLocationChanged(locationResult.getLastLocation());
+                        }
+                    }, Looper.myLooper());
+
                     PendingResult<LocationSettingsResult> result =
                             LocationServices.SettingsApi
                                     .checkLocationSettings(googleApiClient, builder.build());
@@ -500,8 +389,7 @@ public class NewPostActivity extends AppCompatActivity implements GoogleApiClien
                                             .checkSelfPermission(NewPostActivity.this,
                                                     Manifest.permission.ACCESS_FINE_LOCATION);
                                     if (permissionLocation == PackageManager.PERMISSION_GRANTED) {
-                                        mylocation = LocationServices.FusedLocationApi
-                                                .getLastLocation(googleApiClient);
+                                        mylocation = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
                                     }
                                     break;
                                 case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
@@ -561,7 +449,7 @@ public class NewPostActivity extends AppCompatActivity implements GoogleApiClien
         }
     }
 
-    private void checkPermissions(){
+    private void checkPermissions() {
         int permissionLocation = ContextCompat.checkSelfPermission(NewPostActivity.this,
                 android.Manifest.permission.ACCESS_FINE_LOCATION);
         List<String> listPermissionsNeeded = new ArrayList<>();
@@ -571,7 +459,7 @@ public class NewPostActivity extends AppCompatActivity implements GoogleApiClien
                 ActivityCompat.requestPermissions(this,
                         listPermissionsNeeded.toArray(new String[listPermissionsNeeded.size()]), REQUEST_ID_MULTIPLE_PERMISSIONS);
             }
-        }else{
+        } else {
             getMyLocation();
         }
 

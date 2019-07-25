@@ -7,13 +7,16 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Looper;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -23,11 +26,14 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 
 import com.aris.crowdreporting.Activities.DetailActivity;
 import com.aris.crowdreporting.Adapters.NearRecyclerAdapter;
+import com.aris.crowdreporting.CheckLoc.CheckLoc;
 import com.aris.crowdreporting.HelperClasses.Near;
 import com.aris.crowdreporting.R;
 import com.aris.crowdreporting.HelperUtils.SortPlaces;
@@ -38,8 +44,10 @@ import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResult;
@@ -68,6 +76,8 @@ public class NearFragment extends Fragment implements GoogleApiClient.Connection
 
     private static final String TAG = "NearAct";
     private RecyclerView near_list_view;
+    private TextView txtEmptyPost, txtGps;
+    private ImageView icnGps;
     private List<Near> near_list;
     private List<User> user_list;
     private List<SortPlaces> sortPlaces;
@@ -82,8 +92,10 @@ public class NearFragment extends Fragment implements GoogleApiClient.Connection
     private Location mylocation;
     private LocationManager locationManager;
     private GoogleApiClient googleApiClient;
-    private final static int REQUEST_CHECK_SETTINGS_GPS=0x1;
-    private final static int REQUEST_ID_MULTIPLE_PERMISSIONS=0x2;
+    private LocationRequest mLocationRequest;
+
+    private final static int REQUEST_CHECK_SETTINGS_GPS = 0x1;
+    private final static int REQUEST_ID_MULTIPLE_PERMISSIONS = 0x2;
 
     private SpotsDialog dialog;
 
@@ -93,6 +105,7 @@ public class NearFragment extends Fragment implements GoogleApiClient.Connection
     private Date cDate;
 
     private com.aris.crowdreporting.HelperUtils.Status status;
+    private SwipeRefreshLayout pullToRefresh;
 
     public NearFragment() {
         // Required empty public constructor
@@ -109,7 +122,15 @@ public class NearFragment extends Fragment implements GoogleApiClient.Connection
         near_list = new ArrayList<>();
         user_list = new ArrayList<>();
 
+        mLocationRequest = new LocationRequest();
+
         near_list_view = view.findViewById(R.id.near_list_view);
+        txtEmptyPost = view.findViewById(R.id.empty_post);
+//        txtGps = view.findViewById(R.id.aktifkan_gps);
+        icnGps = view.findViewById(R.id.icongps);
+
+        pullToRefresh = view.findViewById(R.id.pull);
+        pullToRefresh.setColorSchemeColors(Color.CYAN, Color.YELLOW, Color.MAGENTA);
 
         firebaseAuth = FirebaseAuth.getInstance();
         client = LocationServices.getFusedLocationProviderClient(getContext());
@@ -142,6 +163,14 @@ public class NearFragment extends Fragment implements GoogleApiClient.Connection
             });
 
             firstQuery();
+
+            pullToRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+                @Override
+                public void onRefresh() {
+                    nearRecyclerAdapter.notifyDataSetChanged();
+                    pullToRefresh.setRefreshing(false);
+                }
+            });
 
         }
 
@@ -194,52 +223,40 @@ public class NearFragment extends Fragment implements GoogleApiClient.Connection
                             Near nearPost = doc.getDocument().toObject(Near.class).withId(nearPostId);
 
 
-                            if (isFirstPageFirstLoad) {
+                            if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 
-//                                    double lat = -6.252196;
-//                                    double lng = 107.002395;
+                                return;
+                            }
+                            client.getLastLocation().addOnSuccessListener((Activity) getContext(), new OnSuccessListener<Location>() {
+                                @Override
+                                public void onSuccess(Location location) {
 
+                                    if (location != null) {
 
-                                if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                                        if (nearPost.getDesc().contains("bekasi")) {
 
-                                    return;
-                                }
-                                client.getLastLocation().addOnSuccessListener((Activity) getContext(), new OnSuccessListener<Location>() {
-                                    @Override
-                                    public void onSuccess(Location location) {
-
-                                        if (location != null) {
+                                            txtEmptyPost.setVisibility(View.GONE);
+                                            icnGps.setVisibility(View.GONE);
 
                                             near_list.add(nearPost);
-
-
                                             Double lat_a = location.getLatitude();
                                             Double lng_a = location.getLongitude();
-//                                            Collections.sort(near_list, new Comparator<Near>() {
-//                                                @Override
-//                                                public int compare(Near o1, Near o2) {
-//                                                    return o1.getTimestamp().compareTo(o2.getTimestamp());
-//                                                }
-//                                            });
                                             Collections.sort(near_list, new SortPlaces(lat_a, lng_a));
-
                                             nearRecyclerAdapter.notifyDataSetChanged();
                                         }
                                     }
-                                });
-
-                            } else {
-
-                                near_list.add(0, nearPost);
-                                nearRecyclerAdapter.notifyDataSetChanged();
-
-                            }
+                                }
+                            });
 
                         }
                     }
 
-                    isFirstPageFirstLoad = false;
-
+                } else {
+                    //JIKA DALAM SEMINGGU TERAKHIR TIDAK ADA POSTS
+                    near_list_view.setVisibility(View.GONE);
+                    txtEmptyPost.setText("No Post In This Week");
+                    txtEmptyPost.setVisibility(View.VISIBLE);
+                    icnGps.setVisibility(View.GONE);
                 }
 
             }
@@ -332,7 +349,7 @@ public class NearFragment extends Fragment implements GoogleApiClient.Connection
 
     private synchronized void setUpGClient() {
         googleApiClient = new GoogleApiClient.Builder(getContext())
-                .enableAutoManage(getActivity(), 0, this)
+                .enableAutoManage(getActivity(), 1, this)
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
                 .addApi(LocationServices.API)
@@ -347,13 +364,12 @@ public class NearFragment extends Fragment implements GoogleApiClient.Connection
     public void onLocationChanged(Location location) {
         mylocation = location;
         if (mylocation != null) {
-            Double latitude = mylocation.getLatitude();
-            Double longitude = mylocation.getLongitude();
             nearRecyclerAdapter.notifyDataSetChanged();
             Toast.makeText(getContext(), "Get Location", Toast.LENGTH_SHORT).show();
             dialog.dismiss();
             near_list.clear();
             firstQuery();
+
         }
     }
 
@@ -361,6 +377,14 @@ public class NearFragment extends Fragment implements GoogleApiClient.Connection
     @Override
     public void onConnected(Bundle bundle) {
         checkPermissions();
+        if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+
+//        startLocationUpdates();
     }
 
     @Override
@@ -374,6 +398,17 @@ public class NearFragment extends Fragment implements GoogleApiClient.Connection
         //You can display a message here
     }
 
+//    protected void startLocationUpdates() {
+//        if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION)
+//                != PackageManager.PERMISSION_GRANTED
+//                && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION)
+//                != PackageManager.PERMISSION_GRANTED) {
+//            return;
+//        }
+//        LocationServices.FusedLocationApi.requestLocationUpdates(
+//                googleApiClient, mLocationRequest, this);
+//    }
+
     private void getMyLocation() {
         if (googleApiClient != null) {
             if (googleApiClient.isConnected()) {
@@ -382,14 +417,21 @@ public class NearFragment extends Fragment implements GoogleApiClient.Connection
                 if (permissionLocation == PackageManager.PERMISSION_GRANTED) {
                     mylocation = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
                     LocationRequest locationRequest = new LocationRequest();
-                    locationRequest.setInterval(3000);
-                    locationRequest.setFastestInterval(3000);
+                    locationRequest.setInterval(10 * 1000);
+                    locationRequest.setFastestInterval(5 * 1000);
                     locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
                     LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder()
                             .addLocationRequest(locationRequest);
                     builder.setAlwaysShow(true);
-                    LocationServices.FusedLocationApi
-                            .requestLocationUpdates(googleApiClient, locationRequest, this);
+//                    LocationServices.FusedLocationApi
+//                            .requestLocationUpdates(googleApiClient, locationRequest, this);
+                    LocationServices.getFusedLocationProviderClient(getContext()).requestLocationUpdates(locationRequest, new LocationCallback() {
+                        @Override
+                        public void onLocationResult(LocationResult locationResult) {
+                            // do work here
+                            onLocationChanged(locationResult.getLastLocation());
+                        }
+                    }, Looper.myLooper());
                     PendingResult<LocationSettingsResult> result =
                             LocationServices.SettingsApi
                                     .checkLocationSettings(googleApiClient, builder.build());
@@ -482,11 +524,10 @@ public class NearFragment extends Fragment implements GoogleApiClient.Connection
     public void onPause() {
         super.onPause();
 
-        if (googleApiClient != null){
+        if (googleApiClient != null) {
             googleApiClient.stopAutoManage(getActivity());
             googleApiClient.disconnect();
             status = new com.aris.crowdreporting.HelperUtils.Status("offline");
-
         }
     }
 

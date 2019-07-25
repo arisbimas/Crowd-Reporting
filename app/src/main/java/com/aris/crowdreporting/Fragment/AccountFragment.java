@@ -1,26 +1,28 @@
 package com.aris.crowdreporting.Fragment;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.AnimationDrawable;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.BottomSheetDialog;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.PopupMenu;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.aris.crowdreporting.Activities.MessageActivity;
+import com.aris.crowdreporting.Activities.AboutUsActivity;
 import com.aris.crowdreporting.HelperClasses.Blog;
 import com.aris.crowdreporting.Activities.LoginActivity;
 import com.aris.crowdreporting.Adapters.MyPhotoRecyclerAdapter;
@@ -61,6 +63,7 @@ public class AccountFragment extends DialogFragment implements
     private TextView usernameV, emailV, phoneV, emptyTxt;
     private ImageView emptyImg;
     private Uri mainImageUri;
+    private LinearLayout edit, hapus;
 
     private String user_id;
     private String emailuser_id;
@@ -74,20 +77,21 @@ public class AccountFragment extends DialogFragment implements
 
     private RecyclerView profileBlogListView;
     private List<Blog> blog_list;
-    private MyPhotoRecyclerAdapter profileBlogRecyclerAdapter;
+    private MyPhotoRecyclerAdapter myPhotoRecyclerAdapter;
 
     private Location mylocation;
     private GoogleApiClient googleApiClient;
-    private final static int REQUEST_CHECK_SETTINGS_GPS=0x1;
-    private final static int REQUEST_ID_MULTIPLE_PERMISSIONS=0x2;
+    private final static int REQUEST_CHECK_SETTINGS_GPS = 0x1;
+    private final static int REQUEST_ID_MULTIPLE_PERMISSIONS = 0x2;
 
     private com.aris.crowdreporting.HelperUtils.Status getstatus;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
         // Inflate the layout for this fragment
-        View view =  inflater.inflate(R.layout.fragment_account, container, false);
+        View view = inflater.inflate(R.layout.fragment_account, container, false);
 
         // declare and initialize FrameLayout
         View frameLayout = (View) view.findViewById(R.id.lini);
@@ -112,10 +116,10 @@ public class AccountFragment extends DialogFragment implements
         user_id = firebaseAuth.getCurrentUser().getUid();
         emailuser_id = firebaseAuth.getCurrentUser().getEmail();
 
-        profileImageV =  (CircularImageView)view.findViewById(R.id.profile_image_view);
-        usernameV = (TextView)view.findViewById(R.id.username_view);
-        emailV = (TextView)view.findViewById(R.id.email_view);
-        phoneV = (TextView)view.findViewById(R.id.phone_view);
+        profileImageV = (CircularImageView) view.findViewById(R.id.profile_image_view);
+        usernameV = (TextView) view.findViewById(R.id.username_view);
+        emailV = (TextView) view.findViewById(R.id.email_view);
+        phoneV = (TextView) view.findViewById(R.id.phone_view);
         emptyTxt = view.findViewById(R.id.empty);
         emptyImg = view.findViewById(R.id.emptyimg);
 
@@ -125,9 +129,9 @@ public class AccountFragment extends DialogFragment implements
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
 
-                if (task.isSuccessful()){
+                if (task.isSuccessful()) {
 
-                    if (task.getResult().exists()){
+                    if (task.getResult().exists()) {
 
                         String name = task.getResult().getString("name");
                         String image = task.getResult().getString("image");
@@ -135,15 +139,15 @@ public class AccountFragment extends DialogFragment implements
                         String phoneku = task.getResult().getString("phone");
 
                         mainImageUri = Uri.parse(image);
-                        usernameV.setText(""+name);
-                        emailV.setText(""+emailku);
-                        phoneV.setText(""+phoneku);
+                        usernameV.setText("" + name);
+                        emailV.setText("" + emailku);
+                        phoneV.setText("" + phoneku);
 
                         RequestOptions placeholderReq = new RequestOptions();
                         placeholderReq.placeholder(R.drawable.defaultimage);
                         try {
                             Glide.with(getContext()).setDefaultRequestOptions(placeholderReq).load(image).into(profileImageV);
-                        } catch (Exception e){
+                        } catch (Exception e) {
                             Log.d(TAG, e.getMessage());
                         }
 
@@ -152,7 +156,7 @@ public class AccountFragment extends DialogFragment implements
                 } else {
 
                     String errMSg = task.getException().getMessage();
-                    Toast.makeText(getContext(), ""+ errMSg, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), "" + errMSg, Toast.LENGTH_SHORT).show();
 
                 }
 
@@ -163,9 +167,9 @@ public class AccountFragment extends DialogFragment implements
         ///Recyclerview
         blog_list = new ArrayList<>();
         profileBlogListView = view.findViewById(R.id.rv_images);
-        profileBlogRecyclerAdapter = new MyPhotoRecyclerAdapter(getContext(),blog_list);
-        profileBlogListView.setLayoutManager(new GridLayoutManager(getContext(),3));
-        profileBlogListView.setAdapter(profileBlogRecyclerAdapter);
+        myPhotoRecyclerAdapter = new MyPhotoRecyclerAdapter(getContext(), blog_list);
+        profileBlogListView.setLayoutManager(new GridLayoutManager(getContext(), 3));
+        profileBlogListView.setAdapter(myPhotoRecyclerAdapter);
 
         Query firstQuery = firebaseFirestore.collection("Posts")
                 .orderBy("timestamp", Query.Direction.DESCENDING)
@@ -188,7 +192,7 @@ public class AccountFragment extends DialogFragment implements
                             String blogPostId = doc.getDocument().getId();
                             Blog blogPost = doc.getDocument().toObject(Blog.class).withId(blogPostId);
                             blog_list.add(blogPost);
-                            profileBlogRecyclerAdapter.notifyDataSetChanged();
+                            myPhotoRecyclerAdapter.notifyDataSetChanged();
 
                         }
                     }
@@ -205,43 +209,83 @@ public class AccountFragment extends DialogFragment implements
 
 
         //POPUP
+//        popup.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//
+//                PopupMenu popupMenu = new PopupMenu(getActivity(), popup);
+//                popupMenu.getMenuInflater().inflate(R.menu.popup_menu_account, popupMenu.getMenu());
+//
+//                popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+//                    @Override
+//                    public boolean onMenuItemClick(MenuItem item) {
+//                        switch (item.getItemId()) {
+//                            case R.id.keluar:
+//                                signOut();
+//                                return true;
+//                            case R.id.edit_profile:
+//                                Intent intent = new Intent(getActivity(), SetupActivity.class);
+//                                startActivity(intent);
+//                                return true;
+//                            default:
+//                                return false;
+//                        }
+//                    }
+//                });
+//
+//                popupMenu.show();
+//            }
+//        });
+
         popup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                PopupMenu popupMenu = new PopupMenu(getActivity(), popup);
-                popupMenu.getMenuInflater().inflate(R.menu.popup_menu_account, popupMenu.getMenu());
+                BottomSheetDialog mBottomSheetDialog = new BottomSheetDialog(getActivity());
+                View sheetView = getActivity().getLayoutInflater().inflate(R.layout.fragment_bottom_sheet_options, null);
+                mBottomSheetDialog.setContentView(sheetView);
+                mBottomSheetDialog.show();
 
-                popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                LinearLayout edit = (LinearLayout) sheetView.findViewById(R.id.bottom_sheet_edit_profile);
+                LinearLayout logout = (LinearLayout) sheetView.findViewById(R.id.bottom_sheet_logout);
+                LinearLayout about = (LinearLayout) sheetView.findViewById(R.id.bottom_sheet_about);
+
+                edit.setOnClickListener(new View.OnClickListener() {
                     @Override
-                    public boolean onMenuItemClick(MenuItem item) {
-                        switch (item.getItemId()) {
-                            case R.id.keluar:
-                                signOut();
-                                return true;
-                            case R.id.edit_profile:
-                                Intent intent = new Intent(getActivity(), SetupActivity.class);
-                                startActivity(intent);
-                                return true;
-                            case R.id.cht:
-                                Intent intentCht = new Intent(getActivity(), MessageActivity.class);
-                                startActivity(intentCht);
-                                return true;
-                            default:
-                                return false;
-                        }
+                    public void onClick(View v) {
+                        Intent intent = new Intent(getActivity(), SetupActivity.class);
+                        startActivity(intent);
+                        mBottomSheetDialog.dismiss();
+
                     }
                 });
 
-                popupMenu.show();
+                logout.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        signOut();
+                        mBottomSheetDialog.dismiss();
+                    }
+                });
+
+                about.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(getActivity(), AboutUsActivity.class);
+                        startActivity(intent);
+                        mBottomSheetDialog.dismiss();
+                    }
+                });
+
             }
         });
+
 
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestEmail()
                 .build();
 
-        if(mGoogleApiClient == null || !mGoogleApiClient.isConnected()){
+        if (mGoogleApiClient == null || !mGoogleApiClient.isConnected()) {
             try {
                 mGoogleApiClient = new GoogleApiClient.Builder(getActivity())
                         .enableAutoManage(getActivity() /* FragmentActivity */, this /* OnConnectionFailedListener */)
@@ -260,31 +304,54 @@ public class AccountFragment extends DialogFragment implements
     //sign out method
     public void signOut() {
 
-        FirebaseAuth.getInstance().signOut();
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setMessage("Are you sure to EXIT ?")
+                .setCancelable(false)
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
 
-        try {
-            if (mGoogleApiClient.isConnected()){
-                Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(
-                        new ResultCallback<Status>() {
-                            @Override
-                            public void onResult(Status status) {
-                                mGoogleApiClient.disconnect();
-                                //mGoogleApiClient.connect();
-                                // [START_EXCLUDE]
-                                FirebaseAuth.getInstance().signOut();
-                                Intent i = new Intent(getActivity(), LoginActivity.class);
-                                i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                                startActivity(i);
-                                // [END_EXCLUDE]
+                        if (firebaseAuth.getCurrentUser().getUid() != null) {
+                            getstatus = new com.aris.crowdreporting.HelperUtils.Status("offline");
+                        }
+
+                        FirebaseAuth.getInstance().signOut();
+
+                        try {
+                            if (mGoogleApiClient.isConnected()) {
+                                Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(
+                                        new ResultCallback<Status>() {
+                                            @Override
+                                            public void onResult(Status status) {
+                                                mGoogleApiClient.disconnect();
+                                                //mGoogleApiClient.connect();
+                                                // [START_EXCLUDE]
+                                                FirebaseAuth.getInstance().signOut();
+                                                Intent i = new Intent(getActivity(), LoginActivity.class);
+                                                i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                                startActivity(i);
+
+                                                // [END_EXCLUDE]
+                                            }
+                                        });
+                            } else {
+                                Toast.makeText(getActivity(), "err", Toast.LENGTH_SHORT).show();
                             }
-                        });
-            } else {
-                Toast.makeText(getActivity(), "err", Toast.LENGTH_SHORT).show();
-            }
-        } catch (Exception e){
-            Log.d(TAG, ""+e.getMessage());
-        }
+                        } catch (Exception e) {
+                            Log.d(TAG, "" + e.getMessage());
+                        }
+                    }
 
+                })
+                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
 
     }
 
@@ -302,13 +369,21 @@ public class AccountFragment extends DialogFragment implements
     @Override
     public void onPause() {
         super.onPause();
-        getstatus = new  com.aris.crowdreporting.HelperUtils.Status("offline");
+        try {
+            if (firebaseAuth.getCurrentUser().getUid() != null) {
+                getstatus = new com.aris.crowdreporting.HelperUtils.Status("offline");
+            }
+        } catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        getstatus = new  com.aris.crowdreporting.HelperUtils.Status("offline");
+        if (firebaseAuth.getCurrentUser().getUid() != null) {
+            getstatus = new com.aris.crowdreporting.HelperUtils.Status("offline");
+        }
     }
 
 

@@ -12,6 +12,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.aris.crowdreporting.Activities.MessageActivity;
+import com.aris.crowdreporting.HelperClasses.Chats;
 import com.aris.crowdreporting.HelperClasses.User;
 import com.aris.crowdreporting.R;
 import com.bumptech.glide.Glide;
@@ -19,10 +20,17 @@ import com.bumptech.glide.request.RequestOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.List;
+
+import javax.annotation.Nullable;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -34,6 +42,9 @@ public class ChatsUsersAdapter extends RecyclerView.Adapter<ChatsUsersAdapter.Vi
 
     private FirebaseFirestore firebaseFirestore;
     private FirebaseAuth firebaseAuth;
+    private FirebaseUser firebaseUser;
+
+    String theLastMsg;
 
     public ChatsUsersAdapter(List<User> userList, boolean isChat){
 
@@ -49,6 +60,7 @@ public class ChatsUsersAdapter extends RecyclerView.Adapter<ChatsUsersAdapter.Vi
         context = parent.getContext();
         firebaseFirestore = FirebaseFirestore.getInstance();
         firebaseAuth = FirebaseAuth.getInstance();
+        firebaseUser = firebaseAuth.getCurrentUser();
         return new ChatsUsersAdapter.ViewHolder(view);
     }
 
@@ -76,6 +88,13 @@ public class ChatsUsersAdapter extends RecyclerView.Adapter<ChatsUsersAdapter.Vi
                 context.startActivity(intentSC);
             }
         });
+
+        if (isChat){
+            holder.lastMessage(user.getUser_id(), holder.lastMsg, userList.get(position).getUser_id());
+//            Toast.makeText(context, ""+userList.get(position).getUser_id(), Toast.LENGTH_SHORT).show();
+        } else {
+            holder.lastMsg.setVisibility(View.GONE);
+        }
 
         if (isChat){
             if (user.getStatus().equals("online")){
@@ -116,7 +135,7 @@ public class ChatsUsersAdapter extends RecyclerView.Adapter<ChatsUsersAdapter.Vi
         private View mView;
 
         private CircleImageView chatUserImage, img_on, img_off;
-        private TextView chatUserName;
+        private TextView chatUserName, lastMsg;
         private RelativeLayout relativeLayout;
 
 
@@ -124,11 +143,13 @@ public class ChatsUsersAdapter extends RecyclerView.Adapter<ChatsUsersAdapter.Vi
             super(itemView);
             mView = itemView;
 
+            relativeLayout = mView.findViewById(R.id.rl_userchatrow);
             chatUserImage = mView.findViewById(R.id.chat_userimage);
             img_on = mView.findViewById(R.id.img_on);
             img_off = mView.findViewById(R.id.img_off);
             chatUserName = mView.findViewById(R.id.chat_username);
-            relativeLayout = mView.findViewById(R.id.rl_userchatrow);
+            lastMsg = mView.findViewById(R.id.last_msg);
+
         }
         
 
@@ -144,6 +165,43 @@ public class ChatsUsersAdapter extends RecyclerView.Adapter<ChatsUsersAdapter.Vi
         public void setChatUserName(String name){
             
             chatUserName.setText(name);
+        }
+
+        //CHeck last msg
+        public void lastMessage(String userid, TextView lastMsg, String pss){
+
+            theLastMsg = "default";
+
+            Query query = firebaseFirestore.collection("Chats/" + firebaseUser.getUid() + "/" + pss)
+                    .orderBy("timestamp", Query.Direction.ASCENDING);
+
+            query.addSnapshotListener(new EventListener<QuerySnapshot>() {
+                @Override
+                public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
+                    for (DocumentSnapshot doc : queryDocumentSnapshots.getDocuments()){
+
+                        Chats chats = doc.toObject(Chats.class);
+                        if (chats.getReceiver().equals(firebaseUser.getUid()) && chats.getSender().equals(userid)
+                                || chats.getReceiver().equals(userid) && chats.getSender().equals(firebaseUser.getUid())){
+                            theLastMsg = chats.getMessage();
+                        }
+
+                    }
+
+                    switch (theLastMsg){
+                        case "default":
+                            lastMsg.setText("");
+                            break;
+                        default:
+                            lastMsg.setText(theLastMsg);
+                            break;
+                    }
+
+                    theLastMsg = "default";
+
+                }
+            });
+
         }
         
 

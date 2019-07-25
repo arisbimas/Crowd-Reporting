@@ -145,33 +145,36 @@ public class HomeFragment extends Fragment {
 
                                 if (isFirstPageFirstLoad) {
 
-                                    blog_list.add(blogPost);
-                                    Collections.sort(blog_list, new Comparator<Blog>() {
-                                        @Override
-                                        public int compare(Blog o1, Blog o2) {
-                                            return o2.getTimestamp().compareTo(o1.getTimestamp());
-                                        }
-                                    });
-                                    blogRecyclerAdapter.notifyItemInserted(blog_list.size());
-                                    blogRecyclerAdapter.notifyDataSetChanged();
+                                    if (blogPost.getDesc().contains("bekasi")){
+                                        blog_list.add(blogPost);
+                                        Collections.sort(blog_list, new Comparator<Blog>() {
+                                            @Override
+                                            public int compare(Blog o1, Blog o2) {
+                                                return o2.getTimestamp().compareTo(o1.getTimestamp());
+                                            }
+                                        });
+                                        blogRecyclerAdapter.notifyItemInserted(blog_list.size());
+                                        blogRecyclerAdapter.notifyDataSetChanged();
+                                    }
+
 
 
                                 } else {
 
-                                    blog_list.add(0, blogPost);
-                                    Collections.sort(blog_list, new Comparator<Blog>() {
-                                        @Override
-                                        public int compare(Blog o1, Blog o2) {
-                                            return o2.getTimestamp().compareTo(o1.getTimestamp());
-                                        }
-                                    });
-                                    blogRecyclerAdapter.notifyItemInserted(0);
-                                    blogRecyclerAdapter.notifyDataSetChanged();
+                                    if (blogPost.getDesc().contains("bekasi")) {
+                                        blog_list.add(0, blogPost);
+                                        Collections.sort(blog_list, new Comparator<Blog>() {
+                                            @Override
+                                            public int compare(Blog o1, Blog o2) {
+                                                return o2.getTimestamp().compareTo(o1.getTimestamp());
+                                            }
+                                        });
+                                        blogRecyclerAdapter.notifyItemInserted(0);
+                                        blogRecyclerAdapter.notifyDataSetChanged();
+                                    }
 
                                 }
                                 dialog.dismiss();
-
-
                             }
                         }
 

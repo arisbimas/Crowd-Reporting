@@ -48,7 +48,6 @@ public class SetupActivity extends AppCompatActivity {
 
     private EditText setupName, setupEmail, setupPhone;
     private ImageButton setupBtn;
-    private ProgressBar setupProgress;
     private String user_id;
     private String emailuser_id;
 
@@ -60,8 +59,6 @@ public class SetupActivity extends AppCompatActivity {
 
     private SpotsDialog dialog;
 
-    private static final int READCODE = 1;
-    private static final int WRITECODE = 2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

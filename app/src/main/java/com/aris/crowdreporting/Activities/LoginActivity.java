@@ -37,6 +37,8 @@ public class LoginActivity extends AppCompatActivity {
     private Button mRegis;
     private ProgressDialog mDialog;
     private ProgressBar progressBar;
+    private ProgressDialog pDialog;
+
 
     private FirebaseAuth mAuth;
     private GoogleSignInClient mGoogleSignInClient;
@@ -54,13 +56,13 @@ public class LoginActivity extends AppCompatActivity {
 
         mAuth = FirebaseAuth.getInstance();
 
-        setContentView(R.layout.activity_login);
-
         mEmail = (EditText) findViewById(R.id.login_email);
         mPass = (EditText) findViewById(R.id.login_password);
         mSignIn = (ImageButton) findViewById(R.id.btn_login);
         mRegis = (Button) findViewById(R.id.btn_signup);
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
+        pDialog = new ProgressDialog(LoginActivity.this);
+
 
         //Get Firebase auth instance
         mAuth = FirebaseAuth.getInstance();
@@ -130,11 +132,21 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
+    private void displayProgressDialog() {
+        pDialog.setMessage("Logging In.. Please wait...");
+        pDialog.setIndeterminate(false);
+        pDialog.setCancelable(false);
+        pDialog.show();
+
+    }
+
+
 
 
     private void signIn() {
         Intent signInIntent = mGoogleSignInClient.getSignInIntent();
         startActivityForResult(signInIntent, RC_SIGN_IN);
+        displayProgressDialog();
     }
 
     @Override
@@ -157,6 +169,8 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void firebaseAuthWithGoogle(GoogleSignInAccount account) {
+
+        displayProgressDialog();
 
         AuthCredential credential = GoogleAuthProvider.getCredential(account.getIdToken(), null);
         mAuth.signInWithCredential(credential)

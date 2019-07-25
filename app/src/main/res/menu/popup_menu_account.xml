@@ -7,9 +7,5 @@
     <item
         android:id="@+id/keluar"
         android:title="Sign Out"/>
-    <item
-        android:id="@+id/cht"
-        android:title="cht"/>
-
 
 </menu>

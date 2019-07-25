@@ -1,6 +1,8 @@
 package com.aris.crowdreporting.Activities;
 
+import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -15,10 +17,18 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.aris.crowdreporting.APIService;
 import com.aris.crowdreporting.Adapters.MessageAdapter;
 import com.aris.crowdreporting.Adapters.MsgAdapter;
 import com.aris.crowdreporting.HelperClasses.Chats;
 import com.aris.crowdreporting.HelperClasses.Comments;
+import com.aris.crowdreporting.HelperClasses.User;
+import com.aris.crowdreporting.HelperUtils.Status;
+import com.aris.crowdreporting.Notifications.Client;
+import com.aris.crowdreporting.Notifications.Data;
+import com.aris.crowdreporting.Notifications.MyResponse;
+import com.aris.crowdreporting.Notifications.Sender;
+import com.aris.crowdreporting.Notifications.Token;
 import com.aris.crowdreporting.R;
 import com.bumptech.glide.Glide;
 import com.firebase.client.Firebase;
@@ -53,6 +63,9 @@ import java.util.Map;
 import javax.annotation.Nullable;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class MessageActivity extends AppCompatActivity {
 
@@ -71,10 +84,16 @@ public class MessageActivity extends AppCompatActivity {
 
     Intent intent;
 
+    APIService apiService;
+
+    boolean notify = false;
+
     private String TAG = "MSG_ACTY";
     private final List<Chats> chatsList = new ArrayList<>();
     private LinearLayoutManager linearLayoutManager;
     private MsgAdapter msgAdapter;
+
+    private String user_id_msg;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,8 +113,10 @@ public class MessageActivity extends AppCompatActivity {
             }
         });
 
+        apiService = Client.getClient("https://fcm.googleapis.com/").create(APIService.class);
+
         intent = getIntent();
-        String user_id_msg = intent.getStringExtra("user_id_msg");
+        user_id_msg = intent.getStringExtra("user_id_msg");
 
         firebaseFirestore = FirebaseFirestore.getInstance();
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
@@ -147,6 +168,7 @@ public class MessageActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
+                notify = true;
                 String msg = txt_send.getText().toString();
 
                 if (!msg.equals("")){
@@ -252,7 +274,72 @@ public class MessageActivity extends AppCompatActivity {
         firebaseFirestore.collection(current_user_ref).add(hashMap);
         firebaseFirestore.collection(chat_user_ref).add(hashMap1);
 
+        final String msg = message;
 
+
+        firebaseFirestore.collection("Users").document(firebaseUser.getUid()).addSnapshotListener(new EventListener<DocumentSnapshot>() {
+            @Override
+            public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
+
+                User user = documentSnapshot.toObject(User.class);
+                sendNotification(receiver, user.getName(), msg);
+                notify = false;
+            }
+        });
+
+    }
+
+    private void sendNotification(String receiver, final String username, String message) {
+
+        user_id_msg = intent.getStringExtra("user_id_msg");
+
+        CollectionReference tokens = FirebaseFirestore.getInstance().collection("Tokens");
+        Query query = tokens;
+
+        query.addSnapshotListener(this, new EventListener<QuerySnapshot>() {
+                @Override
+                public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
+
+                    if (e != null) {
+                        Log.w(TAG, "listen:error", e);
+                        return;
+                    }
+
+                    if (!documentSnapshots.isEmpty()) {
+
+                        for (DocumentChange doc : documentSnapshots.getDocumentChanges()) {
+
+                            if (doc.getType() == DocumentChange.Type.ADDED) {
+
+                                Token token = doc.getDocument().toObject(Token.class);
+                                Data data = new Data(firebaseUser.getUid(), R.mipmap.ic_launcher, username+": "+message, "New Message", user_id_msg);
+
+                                Sender sender = new Sender(data, token.getToken());
+
+                                apiService.sendNotification(sender)
+                                        .enqueue(new Callback<MyResponse>() {
+                                            @Override
+                                            public void onResponse(Call<MyResponse> call, Response<MyResponse> response) {
+                                                if (response.code() == 200){
+                                                    if (response.body().success != 1){
+                                                        Toast.makeText(MessageActivity.this, "Failed!", Toast.LENGTH_SHORT).show();
+                                                    }
+                                                }
+                                            }
+
+                                            @Override
+                                            public void onFailure(Call<MyResponse> call, Throwable t) {
+
+                                            }
+                                        });
+
+                            }
+
+                        }
+                    }
+
+                }
+            });
 
     }
 
@@ -314,40 +401,51 @@ public class MessageActivity extends AppCompatActivity {
 //                });
 //    }
 
-    private void status (String status){
+//    private void status (String status){
+//
+//        firebaseFirestore = FirebaseFirestore.getInstance();
+//
+//        HashMap<String, Object> hashMap = new HashMap<>();
+//        hashMap.put("status", status);
+//
+//        firebaseFirestore.collection("Users").document(firebaseUser.getUid()).update(hashMap).addOnSuccessListener(new OnSuccessListener<Void>() {
+//            @Override
+//            public void onSuccess(Void aVoid) {
+////                Toast.makeText(MessageActivity.this, "online", Toast.LENGTH_SHORT).show();
+//                Log.d(TAG, "Current USER ONLINE");
+//
+//            }
+//        });
+//
+//    }
 
-        firebaseFirestore = FirebaseFirestore.getInstance();
 
-        HashMap<String, Object> hashMap = new HashMap<>();
-        hashMap.put("status", status);
-
-        firebaseFirestore.collection("Users").document(firebaseUser.getUid()).update(hashMap).addOnSuccessListener(new OnSuccessListener<Void>() {
-            @Override
-            public void onSuccess(Void aVoid) {
-//                Toast.makeText(MessageActivity.this, "online", Toast.LENGTH_SHORT).show();
-                Log.d(TAG, "Current USER ONLINE");
-
-            }
-        });
-
+    private void currentUser(String userid){
+        SharedPreferences.Editor editor = getSharedPreferences("PREFS", MODE_PRIVATE).edit();
+        editor.putString("currentuser", userid);
+        editor.apply();
     }
 
+    private Status status;
     @Override
     public void onResume() {
         super.onResume();
-        status("online");
+        status = new Status("online");
+        currentUser(user_id_msg);
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        status("offline");
+        status = new Status("offline");
+        currentUser("none");
     }
 
     @Override
-    protected void onStop() {
+    public void onStop() {
         super.onStop();
-        status("offline");
+        status = new Status("offline");
+        currentUser("none");
     }
 
 }
