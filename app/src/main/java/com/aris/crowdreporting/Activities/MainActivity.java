@@ -266,23 +266,5 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
 
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        status = new Status("online");
-    }
 
-    @Override
-    public void onPause() {
-        super.onPause();
-        if (mAuth.getCurrentUser().getUid() != null) {
-            status = new Status("offline");
-        }
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        status = new Status("offline");
-    }
 }

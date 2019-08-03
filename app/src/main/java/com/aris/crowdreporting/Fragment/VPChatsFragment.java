@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 
 import com.aris.crowdreporting.Adapters.ChatsUsersAdapter;
 
+import com.aris.crowdreporting.HelperClasses.Blog;
 import com.aris.crowdreporting.HelperClasses.Chatlist;
 import com.aris.crowdreporting.HelperClasses.Chats;
 import com.aris.crowdreporting.HelperClasses.Comments;
@@ -38,6 +39,8 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.iid.FirebaseInstanceId;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import javax.annotation.Nullable;
@@ -84,9 +87,11 @@ public class VPChatsFragment extends Fragment {
 
 //                userList.clear();
                 for (DocumentChange doc : queryDocumentSnapshots.getDocumentChanges()) {
+                    if (doc.getType() == DocumentChange.Type.ADDED) {
 
-                    Chatlist chatlist = doc.getDocument().toObject(Chatlist.class);
-                    userList.add(chatlist);
+                        Chatlist chatlist = doc.getDocument().toObject(Chatlist.class);
+                        userList.add(chatlist);
+                    }
 
                 }
                 chatList();
@@ -123,6 +128,7 @@ public class VPChatsFragment extends Fragment {
                     for (Chatlist chatlist : userList){
                         if (user.getUser_id().equals(chatlist.getId())){
                             mUsers.add(user);
+
                         }
                     }
                 }

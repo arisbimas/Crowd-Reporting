@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Crowdsourcing</string>
+    <string name="app_name">Crowdsourcing App</string>
     <string name="title_activity_post">PostActivity</string>
 
     <!-- TODO: Remove or change this placeholder text -->
@@ -19,6 +19,7 @@
     <string name="username">Username</string>
     <string name="title_activity_comment">CommentActivity</string>
     <string name="title_activity_maps">Map</string>
+    <string name="tujuanapp">Aplikasi ini dibuat untuk memenuhi syarat kelulusan program studi Teknik Informatika STMIK Bani Saleh</string>
 
     <string name="no_location_detected">
         No location detected. Make sure location is enabled on the device.

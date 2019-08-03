@@ -20,7 +20,19 @@
         android:layout_toEndOf="@+id/chat_userimage"
         android:layout_toRightOf="@id/chat_userimage"
         android:text="username"
-        android:textSize="18dp" />
+        android:textSize="18dp"
+        android:maxLines="1"/>
+
+    <TextView
+        android:id="@+id/chat_timestamp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="5dp"
+        android:fontFamily="@font/aref_ruqaa"
+        android:maxLines="1"
+        android:text="--"
+        android:textSize="13dp" />
 
     <TextView
         android:id="@+id/last_msg"

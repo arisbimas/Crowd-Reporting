@@ -425,7 +425,7 @@ public class NearFragment extends Fragment implements GoogleApiClient.Connection
                     builder.setAlwaysShow(true);
 //                    LocationServices.FusedLocationApi
 //                            .requestLocationUpdates(googleApiClient, locationRequest, this);
-                    LocationServices.getFusedLocationProviderClient(getContext()).requestLocationUpdates(locationRequest, new LocationCallback() {
+                    LocationServices.getFusedLocationProviderClient((Activity)getContext()).requestLocationUpdates(locationRequest, new LocationCallback() {
                         @Override
                         public void onLocationResult(LocationResult locationResult) {
                             // do work here

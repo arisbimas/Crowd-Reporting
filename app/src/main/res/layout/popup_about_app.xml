@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="350dp"
+    android:layout_height="wrap_content"
+    android:background="@color/grey"
+    android:padding="5dp"
+    android:layout_gravity="center">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:textColor="@android:color/black"
+                android:text="1. Pengguna dapat menerima dan memberi informasi kepada penggunan lain berupa berita, kejadian atau peristiwa yang terjadi di wilayah bekasi yang berbentuk sebuah postingan yang menyertakan foto, deskripsi dan lokasi dari informasi tersebut berada."/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:textColor="@android:color/black"
+                android:text="2. Contohnya kebakaran, banjir, macet, operasi penertiban lalu lintas (tilang), kecelakaan, orang hilang, event bekasi dan masih banyak lagi yang intinya adalah sebuah informasi yang berguna untuk masyarakat atau sesama pengguna aplikasi khususnya yang berada di wilayah bekasi."/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:textColor="@android:color/black"
+                android:text="3. Salah satu syarat untuk bisa memberikan informasi di aplikasi ini adalah ketika akan melakukan posting informasi harus menyertakan lokasi pada saat user itu berada atau lebih tepatnya lokasi kejadian dengan cara mengaktifkan gps. Kenapa harus ada lokasi dari informasi tersebut agar terbukti bahwa pengguna yang memposting informasi tersebut setidaknya benar benar berada di lokasi kejadian."/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:textColor="@android:color/black"
+                android:text="4. Jika pengguna melihat atau mendapat informasi yang salah atau tidak sesuai dengan tujuan dari aplikasi ini maka pengguna bisa melaporkan postingan atau informasi tersebut. Sistem akan mencatat berapa kali post tersebut direport, jika lebih dari 3 kali maka secara otomatis post tersebut tidak akan muncul di aplikasi atau terhapus"/>
+        </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>

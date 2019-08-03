@@ -71,9 +71,9 @@ public class MsgAdapter extends RecyclerView.Adapter<MsgAdapter.MsgViewHolder> {
             long millisecond = chats.getTimestamp().getTime();
             String dateString = DateFormat.format("HH.mm", new Date(millisecond)).toString();
 
-//            String timeAgo = TimeAgo.getTimeAgo(millisecond);
+            String timeAgo = TimeAgo.getTimeAgo(millisecond);
 
-            msgViewHolder.timeMsg.setText(dateString);
+            msgViewHolder.timeMsg.setText(timeAgo);
         } catch (Exception e){
             msgViewHolder.timeMsg.setText("just now");
         }

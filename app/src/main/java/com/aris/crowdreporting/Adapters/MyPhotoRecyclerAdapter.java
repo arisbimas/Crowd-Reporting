@@ -131,7 +131,6 @@ public class MyPhotoRecyclerAdapter extends RecyclerView.Adapter<MyPhotoRecycler
                             intent.putExtra("blog_id", blogPost.BlogPostId);
                             intent.putExtra("user_id", blogPost.getUser_id());
                             context.startActivity(intent);
-                            Toast.makeText(context, "edit " + blogPost.BlogPostId, Toast.LENGTH_SHORT).show();
                             holder.mBottomSheetDialog.dismiss();
 
                         }

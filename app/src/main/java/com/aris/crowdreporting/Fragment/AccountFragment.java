@@ -315,7 +315,7 @@ public class AccountFragment extends DialogFragment implements
                             getstatus = new com.aris.crowdreporting.HelperUtils.Status("offline");
                         }
 
-                        FirebaseAuth.getInstance().signOut();
+//                        FirebaseAuth.getInstance().signOut();
 
                         try {
                             if (mGoogleApiClient.isConnected()) {
@@ -381,8 +381,12 @@ public class AccountFragment extends DialogFragment implements
     @Override
     public void onStop() {
         super.onStop();
-        if (firebaseAuth.getCurrentUser().getUid() != null) {
-            getstatus = new com.aris.crowdreporting.HelperUtils.Status("offline");
+        try {
+            if (firebaseAuth.getCurrentUser().getUid() != null) {
+                getstatus = new com.aris.crowdreporting.HelperUtils.Status("offline");
+            }
+        } catch (Exception e){
+            e.printStackTrace();
         }
     }
 

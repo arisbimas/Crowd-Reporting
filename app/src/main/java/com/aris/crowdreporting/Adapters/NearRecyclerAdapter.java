@@ -20,6 +20,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.aris.crowdreporting.Activities.DetailActivity;
+import com.aris.crowdreporting.Activities.DirectionsActivity;
 import com.aris.crowdreporting.HelperClasses.Near;
 import com.aris.crowdreporting.HelperClasses.User;
 import com.aris.crowdreporting.Activities.MapsActivity;
@@ -140,7 +141,7 @@ public class NearRecyclerAdapter extends RecyclerView.Adapter<NearRecyclerAdapte
                     viewHolder.seeMap.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            Intent intentMap = new Intent(context, MapsActivity.class);
+                            Intent intentMap = new Intent(context, DirectionsActivity.class);
                             intentMap.putExtra("lat_a", lat_a);
                             intentMap.putExtra("lon_a", lng_a);
                             intentMap.putExtra("lat_b", lat_b);

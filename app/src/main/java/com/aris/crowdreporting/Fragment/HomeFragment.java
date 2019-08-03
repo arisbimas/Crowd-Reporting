@@ -1,18 +1,27 @@
 package com.aris.crowdreporting.Fragment;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.aris.crowdreporting.Activities.MainActivity;
+import com.aris.crowdreporting.Activities.NewPostActivity;
+import com.aris.crowdreporting.Adapters.ChatsUsersAdapter;
 import com.aris.crowdreporting.HelperClasses.Blog;
 import com.aris.crowdreporting.Adapters.BlogRecyclerAdapter;
 import com.aris.crowdreporting.HelperUtils.Status;
@@ -20,10 +29,12 @@ import com.aris.crowdreporting.R;
 import com.aris.crowdreporting.HelperClasses.User;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
@@ -35,12 +46,14 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 
+import javax.annotation.Nullable;
+
 import dmax.dialog.SpotsDialog;
 
 import static android.support.constraint.Constraints.TAG;
 
 
-public class HomeFragment extends Fragment {
+public class HomeFragment extends Fragment implements SearchView.OnQueryTextListener{
 
     SwipeRefreshLayout pullToRefresh;
 
@@ -70,6 +83,8 @@ public class HomeFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.fragment_home, container, false);
+        //nampilin tambahan menu di actionbar pada fragment
+        setHasOptionsMenu(true);
 
         blog_list = new ArrayList<>();
         user_list = new ArrayList<>();
@@ -112,79 +127,8 @@ public class HomeFragment extends Fragment {
                 }
             });
 
-            String s = "lapor";
 
-            CollectionReference collectionReference = firebaseFirestore.collection("Posts");
-
-            Query firstQuery = collectionReference.whereEqualTo("reports", "false");
-            firstQuery.addSnapshotListener(getActivity(), new EventListener<QuerySnapshot>() {
-                @Override
-                public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
-
-                    if (e != null) {
-                        Log.w(TAG, "listen:error", e);
-                        return;
-                    }
-
-                    if (!documentSnapshots.isEmpty()) {
-
-                        if (isFirstPageFirstLoad) {
-
-                            lastVisible = documentSnapshots.getDocuments().get(documentSnapshots.size() - 1);
-                            blog_list.clear();
-
-                        }
-
-                        for (DocumentChange doc : documentSnapshots.getDocumentChanges()) {
-
-                            if (doc.getType() == DocumentChange.Type.ADDED) {
-
-
-                                String blogPostId = doc.getDocument().getId();
-                                Blog blogPost = doc.getDocument().toObject(Blog.class).withId(blogPostId);
-
-                                if (isFirstPageFirstLoad) {
-
-                                    if (blogPost.getDesc().contains("bekasi")){
-                                        blog_list.add(blogPost);
-                                        Collections.sort(blog_list, new Comparator<Blog>() {
-                                            @Override
-                                            public int compare(Blog o1, Blog o2) {
-                                                return o2.getTimestamp().compareTo(o1.getTimestamp());
-                                            }
-                                        });
-                                        blogRecyclerAdapter.notifyItemInserted(blog_list.size());
-                                        blogRecyclerAdapter.notifyDataSetChanged();
-                                    }
-
-
-
-                                } else {
-
-                                    if (blogPost.getDesc().contains("bekasi")) {
-                                        blog_list.add(0, blogPost);
-                                        Collections.sort(blog_list, new Comparator<Blog>() {
-                                            @Override
-                                            public int compare(Blog o1, Blog o2) {
-                                                return o2.getTimestamp().compareTo(o1.getTimestamp());
-                                            }
-                                        });
-                                        blogRecyclerAdapter.notifyItemInserted(0);
-                                        blogRecyclerAdapter.notifyDataSetChanged();
-                                    }
-
-                                }
-                                dialog.dismiss();
-                            }
-                        }
-
-                        isFirstPageFirstLoad = false;
-
-                    }
-
-                }
-
-            });
+            firstQ();
 
             pullToRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
                 @Override
@@ -200,7 +144,151 @@ public class HomeFragment extends Fragment {
         return view;
     }
 
-//    public void loadMorePost(){
+    private void firstQ() {
+        CollectionReference collectionReference = firebaseFirestore.collection("Posts");
+
+        Query firstQuery = collectionReference.whereEqualTo("reports", "false");
+        firstQuery.addSnapshotListener(getActivity(), new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
+
+                if (e != null) {
+                    Log.w(TAG, "listen:error", e);
+                    return;
+                }
+
+                if (!documentSnapshots.isEmpty()) {
+
+                    if (isFirstPageFirstLoad) {
+
+                        lastVisible = documentSnapshots.getDocuments().get(documentSnapshots.size() - 1);
+                        blog_list.clear();
+
+                    }
+
+                    for (DocumentChange doc : documentSnapshots.getDocumentChanges()) {
+
+                        if (doc.getType() == DocumentChange.Type.ADDED) {
+
+
+                            String blogPostId = doc.getDocument().getId();
+                            Blog blogPost = doc.getDocument().toObject(Blog.class).withId(blogPostId);
+
+                            if (isFirstPageFirstLoad) {
+
+                                if (blogPost.getDesc().contains("bekasi")){
+                                    blog_list.add(blogPost);
+                                    Collections.sort(blog_list, new Comparator<Blog>() {
+                                        @Override
+                                        public int compare(Blog o1, Blog o2) {
+                                            return o2.getTimestamp().compareTo(o1.getTimestamp());
+                                        }
+                                    });
+                                    blogRecyclerAdapter.notifyItemInserted(blog_list.size());
+                                    blogRecyclerAdapter.notifyDataSetChanged();
+                                }
+
+
+
+                            } else {
+
+                                if (blogPost.getDesc().contains("bekasi")) {
+                                    blog_list.add(0, blogPost);
+                                    Collections.sort(blog_list, new Comparator<Blog>() {
+                                        @Override
+                                        public int compare(Blog o1, Blog o2) {
+                                            return o2.getTimestamp().compareTo(o1.getTimestamp());
+                                        }
+                                    });
+                                    blogRecyclerAdapter.notifyItemInserted(0);
+                                    blogRecyclerAdapter.notifyDataSetChanged();
+                                }
+
+                            }
+                            dialog.dismiss();
+                        }
+                    }
+
+                    isFirstPageFirstLoad = false;
+
+                }
+
+            }
+
+        });
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+
+        inflater.inflate(R.menu.action_bar_search, menu);
+
+        MenuItem menuItem = menu.findItem(R.id.menu_search);
+        SearchView searchView = (SearchView)menuItem.getActionView();
+        searchView.setOnQueryTextListener(this);
+
+        menuItem.setOnActionExpandListener(new MenuItem.OnActionExpandListener() {
+            @Override
+            public boolean onMenuItemActionExpand(MenuItem menuItem) {
+                return true;
+            }
+
+            @Override
+            public boolean onMenuItemActionCollapse(MenuItem menuItem) {
+
+                firstQ();
+
+                return true;
+            }
+        });
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.menu_search) {
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public boolean onQueryTextSubmit(String s) {
+        FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
+        Query query = firebaseFirestore.collection("Posts").orderBy("timestamp", Query.Direction.DESCENDING);
+        query.addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
+                blog_list.clear();
+
+                for (DocumentChange doc : queryDocumentSnapshots.getDocumentChanges()){
+
+                    String blogPostId = doc.getDocument().getId();
+                    Blog blogPost = doc.getDocument().toObject(Blog.class).withId(blogPostId);
+
+                    if (blogPost.getDesc().toLowerCase().contains(s)){
+                        blog_list.add(blogPost);
+                    }
+                }
+
+                blogRecyclerAdapter = new BlogRecyclerAdapter(blog_list);
+                blog_list_view.setAdapter(blogRecyclerAdapter);
+            }
+        });
+        return false;
+    }
+
+    @Override
+    public boolean onQueryTextChange(String s) {
+
+        return false;
+    }
+
+    //    public void loadMorePost(){
 //
 //        if(firebaseAuth.getCurrentUser() != null) {
 //

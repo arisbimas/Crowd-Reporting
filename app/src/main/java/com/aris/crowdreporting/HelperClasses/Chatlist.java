@@ -1,14 +1,18 @@
 package com.aris.crowdreporting.HelperClasses;
 
+import java.util.Date;
+
 public class Chatlist {
 
     public String id;
+    public Date timestamp;
 
     public Chatlist() {
     }
 
-    public Chatlist(String id) {
+    public Chatlist(String id, Date timestamp) {
         this.id = id;
+        this.timestamp = timestamp;
     }
 
     public String getId() {
@@ -17,5 +21,13 @@ public class Chatlist {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public Date getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(Date timestamp) {
+        this.timestamp = timestamp;
     }
 }

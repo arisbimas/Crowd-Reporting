@@ -7,6 +7,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -190,6 +191,7 @@ public class VPUsersChatFragment extends Fragment {
             }
         });
 
+
         txtSearchUsers.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -213,13 +215,10 @@ public class VPUsersChatFragment extends Fragment {
         return view;
     }
 
-    private void searchUsers(String s) {
+    private void searchUsers(String usersearch) {
 
         FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
-        Query query = firebaseFirestore.collection("Users").orderBy("name", Query.Direction.ASCENDING)
-                .startAt(s)
-                .endAt(s+"\uf8ff");
-
+        Query query = firebaseFirestore.collection("Users").orderBy("name", Query.Direction.ASCENDING);
         query.addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
@@ -228,7 +227,7 @@ public class VPUsersChatFragment extends Fragment {
                 for (DocumentSnapshot snapshot : queryDocumentSnapshots.getDocuments()){
                     User user = snapshot.toObject(User.class);
 
-                    if (!user.getUser_id().equals(firebaseUser.getUid())){
+                    if (user.getName().toLowerCase().contains(usersearch) && !user.getUser_id().equals(firebaseUser.getUid())){
                         userList.add(user);
                     }
                 }
@@ -237,6 +236,7 @@ public class VPUsersChatFragment extends Fragment {
                 recyclerView.setAdapter(chatsUsersAdapter);
             }
         });
+
 
     }
 
@@ -278,5 +278,6 @@ public class VPUsersChatFragment extends Fragment {
         }
 
     }
+
 
 }

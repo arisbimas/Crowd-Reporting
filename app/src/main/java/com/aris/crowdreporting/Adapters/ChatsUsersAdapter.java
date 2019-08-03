@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +15,7 @@ import android.widget.Toast;
 import com.aris.crowdreporting.Activities.MessageActivity;
 import com.aris.crowdreporting.HelperClasses.Chats;
 import com.aris.crowdreporting.HelperClasses.User;
+import com.aris.crowdreporting.HelperUtils.TimeAgo;
 import com.aris.crowdreporting.R;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
@@ -28,6 +30,7 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Nullable;
@@ -45,6 +48,7 @@ public class ChatsUsersAdapter extends RecyclerView.Adapter<ChatsUsersAdapter.Vi
     private FirebaseUser firebaseUser;
 
     String theLastMsg;
+    long lastTimeChat;
 
     public ChatsUsersAdapter(List<User> userList, boolean isChat){
 
@@ -77,6 +81,7 @@ public class ChatsUsersAdapter extends RecyclerView.Adapter<ChatsUsersAdapter.Vi
 //        holder.setUserData(name, image);
         holder.setChatUserImage(image);
         holder.setChatUserName(name);
+        holder.setChatTimestamp();
 
         //start chat
         holder.relativeLayout.setOnClickListener(new View.OnClickListener() {
@@ -135,7 +140,7 @@ public class ChatsUsersAdapter extends RecyclerView.Adapter<ChatsUsersAdapter.Vi
         private View mView;
 
         private CircleImageView chatUserImage, img_on, img_off;
-        private TextView chatUserName, lastMsg;
+        private TextView chatUserName,chatTimestamp, lastMsg;
         private RelativeLayout relativeLayout;
 
 
@@ -145,9 +150,10 @@ public class ChatsUsersAdapter extends RecyclerView.Adapter<ChatsUsersAdapter.Vi
 
             relativeLayout = mView.findViewById(R.id.rl_userchatrow);
             chatUserImage = mView.findViewById(R.id.chat_userimage);
+            chatUserName = mView.findViewById(R.id.chat_username);
+            chatTimestamp = mView.findViewById(R.id.chat_timestamp);
             img_on = mView.findViewById(R.id.img_on);
             img_off = mView.findViewById(R.id.img_off);
-            chatUserName = mView.findViewById(R.id.chat_username);
             lastMsg = mView.findViewById(R.id.last_msg);
 
         }
@@ -171,9 +177,11 @@ public class ChatsUsersAdapter extends RecyclerView.Adapter<ChatsUsersAdapter.Vi
         public void lastMessage(String userid, TextView lastMsg, String pss){
 
             theLastMsg = "default";
+            lastTimeChat = 0;
+
 
             Query query = firebaseFirestore.collection("Chats/" + firebaseUser.getUid() + "/" + pss)
-                    .orderBy("timestamp", Query.Direction.ASCENDING);
+                    .orderBy("timestamp");
 
             query.addSnapshotListener(new EventListener<QuerySnapshot>() {
                 @Override
@@ -184,6 +192,12 @@ public class ChatsUsersAdapter extends RecyclerView.Adapter<ChatsUsersAdapter.Vi
                         if (chats.getReceiver().equals(firebaseUser.getUid()) && chats.getSender().equals(userid)
                                 || chats.getReceiver().equals(userid) && chats.getSender().equals(firebaseUser.getUid())){
                             theLastMsg = chats.getMessage();
+                            try {
+                                lastTimeChat = chats.getTimestamp().getTime();
+                            } catch (Exception e1){
+                                e1.printStackTrace();
+
+                            }
                         }
 
                     }
@@ -191,20 +205,29 @@ public class ChatsUsersAdapter extends RecyclerView.Adapter<ChatsUsersAdapter.Vi
                     switch (theLastMsg){
                         case "default":
                             lastMsg.setText("");
+                            chatTimestamp.setText("");
                             break;
                         default:
                             lastMsg.setText(theLastMsg);
+                            try {
+                                chatTimestamp.setText(TimeAgo.getTimeAgo(lastTimeChat).toString());
+                            } catch (Exception e1){
+                                chatTimestamp.setText("");
+                            }
                             break;
                     }
 
                     theLastMsg = "default";
+                    lastTimeChat = 0;
 
                 }
             });
 
         }
-        
 
+
+        public void setChatTimestamp() {
+        }
     }
 
 }
