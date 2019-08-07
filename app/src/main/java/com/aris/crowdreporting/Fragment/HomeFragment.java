@@ -133,6 +133,7 @@ public class HomeFragment extends Fragment implements SearchView.OnQueryTextList
             pullToRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
                 @Override
                 public void onRefresh() {
+
                     blogRecyclerAdapter.notifyDataSetChanged();
                     pullToRefresh.setRefreshing(false);
                 }
@@ -236,6 +237,7 @@ public class HomeFragment extends Fragment implements SearchView.OnQueryTextList
             @Override
             public boolean onMenuItemActionCollapse(MenuItem menuItem) {
 
+                blog_list.clear();
                 firstQ();
 
                 return true;

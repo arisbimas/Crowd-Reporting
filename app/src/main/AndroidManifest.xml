@@ -29,19 +29,37 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".Activities.LoginActivity"></activity>
-        <activity android:name=".Activities.AboutUsActivity" />
+        <activity android:name=".Activities.LoginActivity"
+            android:screenOrientation="portrait">
+        </activity>
+        <activity android:name=".Activities.AboutUsActivity"
+            android:screenOrientation="portrait">
+        </activity>
         <activity
             android:name=".Activities.EditPostActivity"
             android:parentActivityName=".Activities.MainActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".Activities.MessageActivity" />
-        <activity android:name=".Activities.ReAuthEmailActivity" />
-        <activity android:name=".Activities.VerificationEmailActivity" />
-        <activity android:name=".Activities.DetailProfileActivity" />
-        <activity android:name=".Activities.DetailActivity" />
-        <activity android:name=".Activities.DirectionsActivity" />
-        <activity android:name=".CheckLoc.CheckLoc" />
+        <activity android:name=".Activities.MessageActivity"
+            android:screenOrientation="portrait">
+        </activity>
+        <activity android:name=".Activities.ReAuthEmailActivity"
+            android:screenOrientation="portrait">
+        </activity>
+        <activity android:name=".Activities.VerificationEmailActivity"
+            android:screenOrientation="portrait">
+        </activity>
+        <activity android:name=".Activities.DetailProfileActivity"
+            android:screenOrientation="portrait">
+        </activity>
+        <activity android:name=".Activities.DetailActivity"
+            android:screenOrientation="portrait">
+        </activity>
+        <activity android:name=".Activities.DirectionsActivity"
+            android:screenOrientation="portrait">
+        </activity>
+        <activity android:name=".CheckLoc.CheckLoc"
+            android:screenOrientation="portrait">
+        </activity>
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
              (See the file "res/values/google_maps_api.xml").

@@ -5,13 +5,20 @@ import java.util.Date;
 
 public class Blog  extends BlogPostId{
 
-    public String user_id, image_uri, desc, image_thumb, title;
+    public String user_id;
+
+
+    public String image_uri;
+    public String desc;
+    public String image_thumb;
+    public String title;
+    public String address;
     public Date timestamp;
 
     public Blog() {
     }
 
-    public Blog(String user_id, String image_uri, String desc, String image_thumb, Date timestamp, String title) {
+    public Blog(String user_id, String image_uri, String desc, String image_thumb, Date timestamp, String title, String address) {
         this.user_id = user_id;
         this.image_uri = image_uri;
         this.desc = desc;
@@ -68,4 +75,13 @@ public class Blog  extends BlogPostId{
     public void setTitle(String title) {
         this.title = title;
     }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
 }

@@ -97,6 +97,9 @@ public class BlogRecyclerAdapter extends RecyclerView.Adapter<BlogRecyclerAdapte
         String desc_data = blog_list.get(position).getDesc();
         holder.setDescText(desc_data);
 
+        String address_data = blog_list.get(position).getAddress();
+        holder.setAddress(address_data);
+
         String image_url = blog_list.get(position).getImage_uri();
         String thumbUri = blog_list.get(position).getImage_thumb();
 
@@ -407,7 +410,7 @@ public class BlogRecyclerAdapter extends RecyclerView.Adapter<BlogRecyclerAdapte
         private TextView descView;
         private ImageView blogImageView;
         private CircularImageView popUpUserImage;
-        private TextView blogDate;
+        private TextView blogDate, blogAddress;
 
         private TextView blogUserName, popUpUserName, popUpUserEmail, popUpUserPhone;
         private CircularImageView blogUserImage;
@@ -529,6 +532,11 @@ public class BlogRecyclerAdapter extends RecyclerView.Adapter<BlogRecyclerAdapte
                     }
                 }
             });
+        }
+
+        public void setAddress(String address_data) {
+            blogAddress = mView.findViewById(R.id.blog_address);
+            blogAddress.setText(address_data);
         }
     }
 

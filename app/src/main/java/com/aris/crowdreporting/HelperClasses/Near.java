@@ -10,6 +10,7 @@ public class Near extends NearPostId{
     public String longitude;
     public String latitude;
     public Date timestamp;
+    public String address;
 
     public String getImage_thumb() {
         return image_thumb;
@@ -69,7 +70,7 @@ public class Near extends NearPostId{
         return timestamp;
     }
 
-    public Near(String user_id, String image_uri, String desc, String longitude, String latitude, Date timestamp, String image_thumb) {
+    public Near(String user_id, String image_uri, String desc, String longitude, String latitude, Date timestamp, String image_thumb, String address) {
         this.user_id = user_id;
         this.image_uri = image_uri;
         this.desc = desc;
@@ -77,11 +78,18 @@ public class Near extends NearPostId{
         this.latitude = latitude;
         this.timestamp = timestamp;
         this.image_thumb = image_thumb;
+        this.address = address;
     }
 
     public void setTimestamp(Date timestamp) {
         this.timestamp = timestamp;
     }
 
+    public String getAddress() {
+        return address;
+    }
 
+    public void setAddress(String address) {
+        this.address = address;
+    }
 }

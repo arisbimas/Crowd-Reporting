@@ -87,6 +87,9 @@ public class NearRecyclerAdapter extends RecyclerView.Adapter<NearRecyclerAdapte
         String desc_data = near_list.get(i).getDesc();
         viewHolder.setNearDescText(desc_data);
 
+        String address_data = near_list.get(i).getAddress();
+        viewHolder.setAddress(address_data);
+
         String image_url = near_list.get(i).getImage_uri();
         String thumbUri = near_list.get(i).getImage_thumb();
         viewHolder.setBlogImage(image_url, thumbUri);
@@ -194,7 +197,7 @@ public class NearRecyclerAdapter extends RecyclerView.Adapter<NearRecyclerAdapte
         private TextView nearDesc;
         private TextView blogUserName;
         private CircleImageView blogUserImage;
-        private TextView nearU, nearTime;
+        private TextView nearU, nearTime, nearAddress;
         private ImageView blogImageView, seeMap;
         private CardView cardView;
 
@@ -267,6 +270,11 @@ public class NearRecyclerAdapter extends RecyclerView.Adapter<NearRecyclerAdapte
 
             nearU.setText(""+ fin);
             // return String.format("%.2f", distance)+" m";
+        }
+
+        public void setAddress(String address_data) {
+            nearAddress = mView.findViewById(R.id.near_address);
+            nearAddress.setText(address_data);
         }
     }
 }

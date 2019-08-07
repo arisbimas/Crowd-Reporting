@@ -8,6 +8,8 @@ import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.PorterDuff;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 
 import com.aris.crowdreporting.R;
@@ -65,6 +67,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 
@@ -75,7 +78,7 @@ public class NewPostActivity extends AppCompatActivity implements GoogleApiClien
         LocationListener {
 
     private ImageButton mSelectImage;
-    private EditText mLati, mLongi;
+    private EditText mLati, mLongi, mAddress;
     private EditText mDesc;
     private Button mSubmit;
     private Toolbar newPostToolbar;
@@ -122,6 +125,7 @@ public class NewPostActivity extends AppCompatActivity implements GoogleApiClien
         mLati = (EditText) findViewById(R.id.post_lati);
         mLongi = (EditText) findViewById(R.id.post_longi);
         mDesc = (EditText) findViewById(R.id.post_desc);
+        mAddress = (EditText) findViewById(R.id.post_address);
 
         dialog = new SpotsDialog(NewPostActivity.this, "Track Your Location");
 
@@ -164,6 +168,7 @@ public class NewPostActivity extends AppCompatActivity implements GoogleApiClien
 
             String latitude = mLati.getText().toString();
             String longitude = mLongi.getText().toString();
+            String address = mAddress.getText().toString();
             String desc = mDesc.getText().toString().toLowerCase();
 
             if (!TextUtils.isEmpty(latitude) && !TextUtils.isEmpty(longitude) && !TextUtils.isEmpty(desc) && postImageUri != null) {
@@ -236,6 +241,7 @@ public class NewPostActivity extends AppCompatActivity implements GoogleApiClien
                                         String imageUriThumb = downloadUriThumb.toString();
                                         String lati = latitude.toString();
                                         String longi = longitude.toString();
+                                        String addrs = address;
                                         String des = desc.toString();
 
 
@@ -244,6 +250,7 @@ public class NewPostActivity extends AppCompatActivity implements GoogleApiClien
                                         postMap.put("image_thumb", imageUriThumb);
                                         postMap.put("latitude", lati);
                                         postMap.put("longitude", longi);
+                                        postMap.put("address", addrs);
                                         postMap.put("desc", des);
                                         postMap.put("user_id", current_user_id);
                                         postMap.put("timestamp", FieldValue.serverTimestamp());
@@ -328,6 +335,19 @@ public class NewPostActivity extends AppCompatActivity implements GoogleApiClien
             //Or Do whatever you want with your location
             dialog.dismiss();
 
+            Geocoder geocoder = new Geocoder(NewPostActivity.this, Locale.getDefault());
+            String myCity="";
+            try {
+                List<Address> addresses = geocoder.getFromLocation(latitude, longitude,1);
+                String address = addresses.get(0).getAddressLine(0);
+//                myCity = addresses.get(0).getLocality();
+//                Toast.makeText(this, ""+address, Toast.LENGTH_SHORT).show();
+                mAddress.getText().clear();
+                mAddress.setText(address);
+            } catch (IOException e) {
+                mAddress.setText(" ");
+                e.printStackTrace();
+            }
         }
     }
 

@@ -30,4 +30,5 @@
         functionality.</string>
     <string name="settings">Settings</string>
 
-</resources>
+    <string name="filled_bullet">\u25CF</string>
+    </resources>
