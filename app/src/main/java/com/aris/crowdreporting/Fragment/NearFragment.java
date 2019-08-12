@@ -4,8 +4,11 @@ import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentSender;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
@@ -102,6 +105,8 @@ public class NearFragment extends Fragment implements GoogleApiClient.Connection
     private FusedLocationProviderClient client;
     LatLng latLng;
 
+    private Context mContex;
+
     private Date cDate;
 
     private com.aris.crowdreporting.HelperUtils.Status status;
@@ -119,6 +124,8 @@ public class NearFragment extends Fragment implements GoogleApiClient.Connection
         View view = inflater.inflate(R.layout.fragment_near, container, false);
         setHasOptionsMenu(true);
 
+        mContex = getContext();
+
         near_list = new ArrayList<>();
         user_list = new ArrayList<>();
 
@@ -133,9 +140,9 @@ public class NearFragment extends Fragment implements GoogleApiClient.Connection
         pullToRefresh.setColorSchemeColors(Color.CYAN, Color.YELLOW, Color.MAGENTA);
 
         firebaseAuth = FirebaseAuth.getInstance();
-        client = LocationServices.getFusedLocationProviderClient(getContext());
+        client = LocationServices.getFusedLocationProviderClient(mContex);
 
-        dialog = new SpotsDialog(getContext(), "Track Your Location, Please Wait!");
+        dialog = new SpotsDialog(mContex, "Track Your Location, Please Wait!");
 
         nearRecyclerAdapter = new NearRecyclerAdapter(near_list);
         near_list_view.setLayoutManager(new LinearLayoutManager(container.getContext()));
@@ -162,7 +169,7 @@ public class NearFragment extends Fragment implements GoogleApiClient.Connection
                 }
             });
 
-            firstQuery();
+            nearQuery();
 
             pullToRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
                 @Override
@@ -178,7 +185,7 @@ public class NearFragment extends Fragment implements GoogleApiClient.Connection
         return view;
     }
 
-    private void firstQuery() {
+    private void nearQuery() {
         //FORMAT bln/tgl/thn untuk firestore emg gitu
         Date date = new Date();
 
@@ -192,12 +199,12 @@ public class NearFragment extends Fragment implements GoogleApiClient.Connection
         long secs2 = date.getTime() - (7 * DAY_IN_MS);
         Date daysAgo = new Date(secs2);
 
-        Query firstQuery = firebaseFirestore.collection("Posts")
+        Query nearQuery = firebaseFirestore.collection("Posts")
                 .whereEqualTo("reports", "false")
                 .whereLessThanOrEqualTo("timestamp", cDate)
                 .whereGreaterThanOrEqualTo("timestamp", daysAgo);
 
-        firstQuery.addSnapshotListener(getActivity(), new EventListener<QuerySnapshot>() {
+        nearQuery.addSnapshotListener( new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
 
@@ -223,11 +230,15 @@ public class NearFragment extends Fragment implements GoogleApiClient.Connection
                             Near nearPost = doc.getDocument().toObject(Near.class).withId(nearPostId);
 
 
-                            if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-
+                            if (ActivityCompat.checkSelfPermission((Activity) mContex, Manifest.permission.ACCESS_FINE_LOCATION)
+                                    != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission((Activity) mContex,
+                                    Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                                 return;
+                            } else {
+                                Log.d("MYLOG ", "ERR");
                             }
-                            client.getLastLocation().addOnSuccessListener((Activity) getContext(), new OnSuccessListener<Location>() {
+
+                            client.getLastLocation().addOnSuccessListener((Activity) mContex, new OnSuccessListener<Location>() {
                                 @Override
                                 public void onSuccess(Location location) {
 
@@ -324,11 +335,13 @@ public class NearFragment extends Fragment implements GoogleApiClient.Connection
 //            startActivity(intent);
 
             setUpGClient();
-
             return true;
         }
+
+
         return super.onOptionsItemSelected(item);
     }
+
 
     @Override
     public void onStart() {
@@ -348,7 +361,7 @@ public class NearFragment extends Fragment implements GoogleApiClient.Connection
     }
 
     private synchronized void setUpGClient() {
-        googleApiClient = new GoogleApiClient.Builder(getContext())
+        googleApiClient = new GoogleApiClient.Builder(mContex)
                 .enableAutoManage(getActivity(), 1, this)
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
@@ -365,10 +378,10 @@ public class NearFragment extends Fragment implements GoogleApiClient.Connection
         mylocation = location;
         if (mylocation != null) {
             nearRecyclerAdapter.notifyDataSetChanged();
-            Toast.makeText(getContext(), "Get Location", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(mContex, "Get Location", Toast.LENGTH_SHORT).show();
             dialog.dismiss();
             near_list.clear();
-            firstQuery();
+            nearQuery();
 
         }
     }
@@ -377,9 +390,9 @@ public class NearFragment extends Fragment implements GoogleApiClient.Connection
     @Override
     public void onConnected(Bundle bundle) {
         checkPermissions();
-        if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION)
+        if (ActivityCompat.checkSelfPermission(mContex, Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED
-                && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION)
+                && ActivityCompat.checkSelfPermission(mContex, Manifest.permission.ACCESS_COARSE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
             return;
         }
@@ -399,9 +412,9 @@ public class NearFragment extends Fragment implements GoogleApiClient.Connection
     }
 
 //    protected void startLocationUpdates() {
-//        if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION)
+//        if (ActivityCompat.checkSelfPermission(mContex, Manifest.permission.ACCESS_FINE_LOCATION)
 //                != PackageManager.PERMISSION_GRANTED
-//                && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION)
+//                && ActivityCompat.checkSelfPermission(mContex, Manifest.permission.ACCESS_COARSE_LOCATION)
 //                != PackageManager.PERMISSION_GRANTED) {
 //            return;
 //        }
@@ -412,7 +425,7 @@ public class NearFragment extends Fragment implements GoogleApiClient.Connection
     private void getMyLocation() {
         if (googleApiClient != null) {
             if (googleApiClient.isConnected()) {
-                int permissionLocation = ContextCompat.checkSelfPermission(getContext(),
+                int permissionLocation = ContextCompat.checkSelfPermission(mContex,
                         Manifest.permission.ACCESS_FINE_LOCATION);
                 if (permissionLocation == PackageManager.PERMISSION_GRANTED) {
                     mylocation = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
@@ -425,7 +438,7 @@ public class NearFragment extends Fragment implements GoogleApiClient.Connection
                     builder.setAlwaysShow(true);
 //                    LocationServices.FusedLocationApi
 //                            .requestLocationUpdates(googleApiClient, locationRequest, this);
-                    LocationServices.getFusedLocationProviderClient((Activity)getContext()).requestLocationUpdates(locationRequest, new LocationCallback() {
+                    LocationServices.getFusedLocationProviderClient((Activity)mContex).requestLocationUpdates(locationRequest, new LocationCallback() {
                         @Override
                         public void onLocationResult(LocationResult locationResult) {
                             // do work here
@@ -445,7 +458,7 @@ public class NearFragment extends Fragment implements GoogleApiClient.Connection
                                     // All location settings are satisfied.
                                     // You can initialize location requests here.
                                     int permissionLocation = ContextCompat
-                                            .checkSelfPermission(getContext(),
+                                            .checkSelfPermission(mContex,
                                                     Manifest.permission.ACCESS_FINE_LOCATION);
                                     if (permissionLocation == PackageManager.PERMISSION_GRANTED) {
                                         mylocation = LocationServices.FusedLocationApi
@@ -496,7 +509,7 @@ public class NearFragment extends Fragment implements GoogleApiClient.Connection
     }
 
     private void checkPermissions() {
-        int permissionLocation = ContextCompat.checkSelfPermission(getContext(),
+        int permissionLocation = ContextCompat.checkSelfPermission(mContex,
                 android.Manifest.permission.ACCESS_FINE_LOCATION);
         List<String> listPermissionsNeeded = new ArrayList<>();
         if (permissionLocation != PackageManager.PERMISSION_GRANTED) {
@@ -513,7 +526,7 @@ public class NearFragment extends Fragment implements GoogleApiClient.Connection
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
-        int permissionLocation = ContextCompat.checkSelfPermission(getContext(),
+        int permissionLocation = ContextCompat.checkSelfPermission(mContex,
                 Manifest.permission.ACCESS_FINE_LOCATION);
         if (permissionLocation == PackageManager.PERMISSION_GRANTED) {
             getMyLocation();

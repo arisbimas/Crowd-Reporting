@@ -10,7 +10,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -23,6 +22,7 @@ import com.aris.crowdreporting.Fragment.AccountFragment;
 import com.aris.crowdreporting.Fragment.HomeFragment;
 import com.aris.crowdreporting.Fragment.NearFragment;
 import com.aris.crowdreporting.Fragment.ChatsFragment;
+import com.aris.crowdreporting.Fragment.NearNewFragment;
 import com.aris.crowdreporting.HelperUtils.Status;
 import com.aris.crowdreporting.R;
 import com.firebase.client.Firebase;
@@ -44,7 +44,7 @@ import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 import java.util.HashMap;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener {
 
     private static final String TAG = "MainActivity TAG";
     private FirebaseAuth.AuthStateListener mAuthStateListener;
@@ -57,12 +57,6 @@ public class MainActivity extends AppCompatActivity {
 
     private Status status;
 
-    final Fragment fragment1 = new HomeFragment();
-    final Fragment fragment2 = new NearFragment();
-    final Fragment fragment3 = new ChatsFragment();
-    final Fragment fragment4 = new AccountFragment();
-    final FragmentManager fm = getSupportFragmentManager();
-    Fragment active = fragment1;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -80,16 +74,20 @@ public class MainActivity extends AppCompatActivity {
         firebaseFirestore = FirebaseFirestore.getInstance();
 
         if (mAuth.getCurrentUser() != null){
-
+            // kita set default nya Home Fragment
+            loadFragment(new HomeFragment());
             // inisialisasi BottomNavigaionView
-            BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.button_navigation);
-            navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+            BottomNavigationView bottomNavigationView = findViewById(R.id.button_navigation);
+            // beri listener pada saat item/menu bottomnavigation terpilih
+            bottomNavigationView.setOnNavigationItemSelectedListener(this);
 
-            fm.beginTransaction().add(R.id.fragment_container, fragment4, "4").hide(fragment4).commit();
-            fm.beginTransaction().add(R.id.fragment_container, fragment3, "3").hide(fragment3).commit();
-            fm.beginTransaction().add(R.id.fragment_container, fragment2, "2").hide(fragment2).commit();
-            fm.beginTransaction().add(R.id.fragment_container,fragment1, "1").commit();
+//            BottomNavigationViewEx bottomNavigationView = (BottomNavigationViewEx) findViewById(R.id.bottomnav);
 
+            // beri listener pada saat item/menu bottomnavigation terpilih
+//            bottomNavigationView.setOnNavigationItemSelectedListener(this);
+//            bottomNavigationView.enableAnimation(true);
+//            bottomNavigationView.setTextSize(10);
+//            bottomNavigationView.setItemHeight(100);
         }
 
     }
@@ -153,15 +151,15 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-//    private boolean loadFragment(Fragment fragment){
-//        if (fragment != null) {
-//            getSupportFragmentManager().beginTransaction()
-//                    .replace(R.id.fragment_container, fragment)
-//                    .commit();
-//            return true;
-//        }
-//        return false;
-//    }
+    private boolean loadFragment(Fragment fragment){
+        if (fragment != null) {
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.fragment_container, fragment)
+                    .commit();
+            return true;
+        }
+        return false;
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -187,36 +185,25 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
-            = new BottomNavigationView.OnNavigationItemSelectedListener() {
-
-        @Override
-        public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-            switch (item.getItemId()) {
-                case R.id.nav_home:
-                    fm.beginTransaction().hide(active).show(fragment1).commit();
-                    active = fragment1;
-                    return true;
-
-                case R.id.nav_near:
-                    fm.beginTransaction().hide(active).show(fragment2).commit();
-                    active = fragment2;
-                    return true;
-
-                case R.id.nav_chats:
-                    fm.beginTransaction().hide(active).show(fragment3).commit();
-                    active = fragment3;
-                    return true;
-
-                case R.id.nav_account:
-                    fm.beginTransaction().hide(active).show(fragment4).commit();
-                    active = fragment4;
-                    return true;
-            }
-            return false;
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+        Fragment fragment = null;
+        switch (menuItem.getItemId()){
+            case R.id.nav_home:
+                fragment = new HomeFragment();
+                break;
+            case R.id.nav_near:
+                fragment = new NearFragment();
+                break;
+            case R.id.nav_account:
+                fragment = new AccountFragment();
+                break;
+            case R.id.nav_chats:
+                fragment = new ChatsFragment();
+                break;
         }
-    };
-
+        return loadFragment(fragment);
+    }
 
     //runtime permission method
 

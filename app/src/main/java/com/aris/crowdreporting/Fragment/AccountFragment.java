@@ -1,6 +1,7 @@
 package com.aris.crowdreporting.Fragment;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.AnimationDrawable;
@@ -59,6 +60,7 @@ public class AccountFragment extends DialogFragment implements
 
     private final static String TAG = "PROFILE_ACTIVITY";
 
+    private Context mContext;
     private CircularImageView profileImageV;
     private TextView usernameV, emailV, phoneV, emptyTxt;
     private ImageView emptyImg;
@@ -89,6 +91,8 @@ public class AccountFragment extends DialogFragment implements
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+        mContext = getContext();
 
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_account, container, false);
@@ -146,7 +150,7 @@ public class AccountFragment extends DialogFragment implements
                         RequestOptions placeholderReq = new RequestOptions();
                         placeholderReq.placeholder(R.drawable.defaultimage);
                         try {
-                            Glide.with(getContext()).setDefaultRequestOptions(placeholderReq).load(image).into(profileImageV);
+                            Glide.with(mContext).setDefaultRequestOptions(placeholderReq).load(image).into(profileImageV);
                         } catch (Exception e) {
                             Log.d(TAG, e.getMessage());
                         }
@@ -156,7 +160,7 @@ public class AccountFragment extends DialogFragment implements
                 } else {
 
                     String errMSg = task.getException().getMessage();
-                    Toast.makeText(getContext(), "" + errMSg, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(mContext, "" + errMSg, Toast.LENGTH_SHORT).show();
 
                 }
 
@@ -167,8 +171,8 @@ public class AccountFragment extends DialogFragment implements
         ///Recyclerview
         blog_list = new ArrayList<>();
         profileBlogListView = view.findViewById(R.id.rv_images);
-        myPhotoRecyclerAdapter = new MyPhotoRecyclerAdapter(getContext(), blog_list);
-        profileBlogListView.setLayoutManager(new GridLayoutManager(getContext(), 3));
+        myPhotoRecyclerAdapter = new MyPhotoRecyclerAdapter(mContext, blog_list);
+        profileBlogListView.setLayoutManager(new GridLayoutManager(mContext, 3));
         profileBlogListView.setAdapter(myPhotoRecyclerAdapter);
 
         Query firstQuery = firebaseFirestore.collection("Posts")
@@ -339,6 +343,7 @@ public class AccountFragment extends DialogFragment implements
                             }
                         } catch (Exception e) {
                             Log.d(TAG, "" + e.getMessage());
+                            firebaseAuth.signOut();
                         }
                     }
 

@@ -1,6 +1,7 @@
 package com.aris.crowdreporting.Fragment;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -73,6 +74,7 @@ public class HomeFragment extends Fragment implements SearchView.OnQueryTextList
 
     private Status status;
 
+    private Context mContext;
     public HomeFragment() {
         // Required empty public constructor
     }
@@ -86,10 +88,10 @@ public class HomeFragment extends Fragment implements SearchView.OnQueryTextList
         //nampilin tambahan menu di actionbar pada fragment
         setHasOptionsMenu(true);
 
+        mContext = getContext();
+
         blog_list = new ArrayList<>();
         user_list = new ArrayList<>();
-
-
 
         blog_list_view = view.findViewById(R.id.blog_list_view);
         pullToRefresh = view.findViewById(R.id.pull);
@@ -103,7 +105,7 @@ public class HomeFragment extends Fragment implements SearchView.OnQueryTextList
         blog_list_view.setAdapter(blogRecyclerAdapter);
         blog_list_view.setHasFixedSize(true);
 
-        dialog = new SpotsDialog(getContext(), "Loading..");
+        dialog = new SpotsDialog(mContext, "Loading..");
         dialog.show();
 
         if(firebaseAuth.getCurrentUser() != null) {
@@ -177,7 +179,8 @@ public class HomeFragment extends Fragment implements SearchView.OnQueryTextList
 
                             if (isFirstPageFirstLoad) {
 
-                                if (blogPost.getDesc().contains("bekasi")){
+                                if (blogPost.getDesc().toLowerCase().contains("bekasi") || blogPost.getDesc().toLowerCase().contains("bks") || blogPost.getDesc().toLowerCase().contains("bksi")
+                                        || blogPost.getAddress().toLowerCase().contains("bekasi") || blogPost.getAddress().toLowerCase().contains("bks")){
                                     blog_list.add(blogPost);
                                     Collections.sort(blog_list, new Comparator<Blog>() {
                                         @Override
@@ -193,7 +196,8 @@ public class HomeFragment extends Fragment implements SearchView.OnQueryTextList
 
                             } else {
 
-                                if (blogPost.getDesc().contains("bekasi")) {
+                                if (blogPost.getDesc().toLowerCase().contains("bekasi") || blogPost.getDesc().toLowerCase().contains("bks") || blogPost.getDesc().toLowerCase().contains("bksi")
+                                        || blogPost.getAddress().toLowerCase().contains("bekasi") || blogPost.getAddress().toLowerCase().contains("bks")) {
                                     blog_list.add(0, blogPost);
                                     Collections.sort(blog_list, new Comparator<Blog>() {
                                         @Override

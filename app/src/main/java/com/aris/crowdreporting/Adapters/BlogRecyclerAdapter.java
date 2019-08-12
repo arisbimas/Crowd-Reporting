@@ -240,8 +240,8 @@ public class BlogRecyclerAdapter extends RecyclerView.Adapter<BlogRecyclerAdapte
                 intent.putExtra("user_id",blogUserId);
                 intent.putExtra("imurl",image_url);
                 intent.putExtra("desc",desc_data);
-
                 intent.putExtra("time_post",timeAgo);
+//                intent.putExtra("address",address_data);
 
 
                 context.startActivity(intent);
@@ -459,7 +459,7 @@ public class BlogRecyclerAdapter extends RecyclerView.Adapter<BlogRecyclerAdapte
             RequestOptions requestOptions = new RequestOptions();
             requestOptions.placeholder(R.drawable.image_placeholder);
 
-            Glide.with(context).applyDefaultRequestOptions(requestOptions).load(downloadUri).thumbnail(
+            Glide.with(context).applyDefaultRequestOptions(requestOptions).load(thumbUri).thumbnail(
                     Glide.with(context).load(thumbUri)
             ).into(blogImageView);
 

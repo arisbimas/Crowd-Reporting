@@ -123,6 +123,7 @@ public class DetailActivity extends AppCompatActivity {
         final String imgUrl = getIntent().getStringExtra("imurl");
         final String time = getIntent().getStringExtra("time_post");
         final String desc = getIntent().getStringExtra("desc");
+        final String address_data = getIntent().getStringExtra("address");
 
         blogImage = findViewById(R.id.detail_image);
         userPost = findViewById(R.id.userpost);

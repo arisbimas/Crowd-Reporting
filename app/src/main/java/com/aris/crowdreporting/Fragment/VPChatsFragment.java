@@ -11,6 +11,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.aris.crowdreporting.Adapters.ChatsUsersAdapter;
 
@@ -51,6 +54,8 @@ public class VPChatsFragment extends Fragment {
 
     private RecyclerView recyclerView;
     private ChatsUsersAdapter chatsUsersAdapter;
+    private TextView noMsg;
+    private ImageView noMsgImg;
 
     private List<User> mUsers;
     private List<Chatlist> userList;
@@ -71,6 +76,9 @@ public class VPChatsFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_vpchats, container, false);
 
+        noMsg = view.findViewById(R.id.no_msg);
+        noMsgImg = view.findViewById(R.id.no_msg_img);
+
         recyclerView = view.findViewById(R.id.rv_vpchat);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -88,12 +96,19 @@ public class VPChatsFragment extends Fragment {
 //                userList.clear();
                 for (DocumentChange doc : queryDocumentSnapshots.getDocumentChanges()) {
                     if (doc.getType() == DocumentChange.Type.ADDED) {
-
                         Chatlist chatlist = doc.getDocument().toObject(Chatlist.class);
                         userList.add(chatlist);
+
                     }
 
+
                 }
+
+                if (userList.isEmpty()){
+                    noMsg.setVisibility(View.VISIBLE);
+                    noMsgImg.setVisibility(View.VISIBLE);
+                }
+
                 chatList();
 
             }

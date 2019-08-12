@@ -25,7 +25,8 @@
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.0"></android.support.v7.widget.RecyclerView>
+                app:layout_constraintVertical_bias="0.0">
+            </android.support.v7.widget.RecyclerView>
 
             <!--<TextView-->
                 <!--android:id="@+id/aktifkan_gps"-->
@@ -70,10 +71,11 @@
                 android:gravity="center_vertical|center_horizontal"
                 android:paddingLeft="50dp"
                 android:paddingRight="50dp"
-                android:text="GPS IS DISABLE, KLIK THIS ICON"
+                android:text="can't get your location or GPS IS DISABLE. refresh or CLICK THIS ICON"
                 android:textColor="@android:color/black"
-                android:textSize="30sp"
+                android:textSize="20dp"
                 android:textStyle="bold"
+                android:textAllCaps="true"
                 app:layout_constraintEnd_toEndOf="@+id/near_list_view"
                 app:layout_constraintStart_toStartOf="@+id/near_list_view"
                 app:layout_constraintTop_toTopOf="@+id/near_list_view" />

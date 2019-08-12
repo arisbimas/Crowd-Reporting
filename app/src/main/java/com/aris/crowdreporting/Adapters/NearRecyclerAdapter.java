@@ -173,8 +173,8 @@ public class NearRecyclerAdapter extends RecyclerView.Adapter<NearRecyclerAdapte
                 intent.putExtra("user_id",blogUserId);
                 intent.putExtra("imurl",image_url);
                 intent.putExtra("desc",desc_data);
-
                 intent.putExtra("time_post",timeAgo);
+//                intent.putExtra("address",address_data);
 
 
                 context.startActivity(intent);
