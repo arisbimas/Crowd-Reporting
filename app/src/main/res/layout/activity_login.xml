@@ -2,11 +2,11 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/relative"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/bg_pattern"
-    tools:context=".Activities.LoginActivity"
-    android:id="@+id/relative">
+    tools:context=".Activities.LoginActivity">
 
     <RelativeLayout
         android:id="@+id/relative1"
@@ -18,8 +18,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="20dp"
             android:layout_marginStart="15dp"
+            android:layout_marginTop="20dp"
             android:elevation="10dp"
             app:cardBackgroundColor="#fcfcfc"
             app:cardCornerRadius="10dp"
@@ -76,9 +76,9 @@
                 <android.support.design.widget.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="50dp"
                     android:layout_marginLeft="10dp"
                     android:layout_marginRight="10dp"
+                    android:layout_marginBottom="50dp"
                     app:passwordToggleEnabled="true"
                     app:passwordToggleTint="@color/colorAccent">
 
@@ -137,19 +137,19 @@
             android:id="@+id/btn_signup"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="20dp"
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
+            android:layout_margin="20dp"
+            android:background="@drawable/background_rounded1"
             android:text="Don't Have Acc? Register!"
             android:textAllCaps="false"
-            android:background="@drawable/background_rounded1"
-            android:textColor="@android:color/white"/>
+            android:textColor="@android:color/white" />
     </RelativeLayout>
-
 
 
     <ProgressBar
         android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
@@ -160,7 +160,6 @@
         android:layout_marginBottom="0dp"
         android:indeterminate="true"
         android:visibility="invisible"
-        tools:ignore="MissingConstraints"
-        style="?android:attr/progressBarStyleHorizontal"/>
+        tools:ignore="MissingConstraints" />
 
 </RelativeLayout>

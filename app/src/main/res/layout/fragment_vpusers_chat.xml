@@ -7,21 +7,21 @@
 
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/pull1"
-        android:layout_height="match_parent"
-        android:layout_width="match_parent">
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
+
             <EditText
                 android:id="@+id/src_users"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="5dp"
-                android:hint="Search..."
                 android:background="@drawable/background_seach"
                 android:drawableLeft="@mipmap/icon_search"
-                />
+                android:hint="Search..." />
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/rv_chatsusers"

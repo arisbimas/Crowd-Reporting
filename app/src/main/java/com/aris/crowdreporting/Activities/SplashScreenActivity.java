@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 
+import com.aris.crowdreporting.BuildConfig;
 import com.aris.crowdreporting.R;
 
 import gr.net.maroulis.library.EasySplashScreen;
@@ -17,13 +18,16 @@ public class SplashScreenActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        String versionName = BuildConfig.VERSION_NAME;
+
+
         EasySplashScreen easySplashScreen = new EasySplashScreen(SplashScreenActivity.this)
                 .withFullScreen()
                 .withTargetActivity(MainActivity.class)
                 .withSplashTimeOut(3000)
                 .withBackgroundResource(R.drawable.gradient3)
                 .withLogo(R.drawable.logoutama)
-                .withFooterText("Copyright 2019")
+                .withFooterText("Version "+versionName)
                 .withAfterLogoText("By: Aris Bimas Nugroho");
 
         //add custom font

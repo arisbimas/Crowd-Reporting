@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/rl_userchatrow"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:padding="10dp"
-    android:id="@+id/rl_userchatrow">
+    android:padding="10dp">
 
     <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/chat_userimage"
         android:layout_width="50dp"
         android:layout_height="50dp"
-        android:id="@+id/chat_userimage"
-        android:src="@drawable/profile_placeholder"/>
+        android:src="@drawable/profile_placeholder" />
 
     <TextView
         android:id="@+id/chat_username"
@@ -19,9 +19,9 @@
         android:layout_marginLeft="10dp"
         android:layout_toEndOf="@+id/chat_userimage"
         android:layout_toRightOf="@id/chat_userimage"
+        android:maxLines="1"
         android:text="username"
-        android:textSize="18dp"
-        android:maxLines="1"/>
+        android:textSize="18dp" />
 
     <TextView
         android:id="@+id/chat_timestamp"
@@ -39,48 +39,46 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/chat_username"
-        android:layout_toRightOf="@+id/chat_userimage"
         android:layout_marginLeft="10dp"
+        android:layout_toRightOf="@+id/chat_userimage"
+        android:maxLines="1"
         android:paddingTop="5dp"
-        android:textSize="12sp"
-        android:maxLines="1"/>
+        android:textSize="12sp" />
 
     <de.hdodenhof.circleimageview.CircleImageView
-        android:layout_width="15dp"
-        android:layout_height="15dp"
-        app:civ_border_width="10dp"
-        app:civ_border_color="@color/colorGreen_A400"
         android:id="@+id/img_on"
-        android:visibility="gone"
-        android:src="@drawable/profile_placeholder"
-        android:layout_below="@+id/chat_username"
-        android:layout_toRightOf="@+id/chat_userimage"
-        android:layout_toEndOf="@+id/chat_userimage"
-        android:layout_marginTop="10dp"
-        android:layout_marginLeft="-15dp"
-        />
-
-    <de.hdodenhof.circleimageview.CircleImageView
         android:layout_width="15dp"
         android:layout_height="15dp"
-        app:civ_border_width="10dp"
-        app:civ_border_color="#eaeaea"
-        android:id="@+id/img_off"
-        android:visibility="gone"
-        android:src="@drawable/profile_placeholder"
         android:layout_below="@+id/chat_username"
-        android:layout_toRightOf="@+id/chat_userimage"
-        android:layout_toEndOf="@+id/chat_userimage"
-        android:layout_marginTop="10dp"
         android:layout_marginLeft="-15dp"
-        />
+        android:layout_marginTop="10dp"
+        android:layout_toEndOf="@+id/chat_userimage"
+        android:layout_toRightOf="@+id/chat_userimage"
+        android:src="@drawable/profile_placeholder"
+        android:visibility="gone"
+        app:civ_border_color="@color/colorGreen_A400"
+        app:civ_border_width="10dp" />
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/img_off"
+        android:layout_width="15dp"
+        android:layout_height="15dp"
+        android:layout_below="@+id/chat_username"
+        android:layout_marginLeft="-15dp"
+        android:layout_marginTop="10dp"
+        android:layout_toEndOf="@+id/chat_userimage"
+        android:layout_toRightOf="@+id/chat_userimage"
+        android:src="@drawable/profile_placeholder"
+        android:visibility="gone"
+        app:civ_border_color="#eaeaea"
+        app:civ_border_width="10dp" />
 
     <View
-        android:background="@color/grey"
-        android:layout_width = "match_parent"
+        android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:layout_marginTop="5dp"
         android:layout_below="@+id/chat_userimage"
-        android:layout_toRightOf="@+id/chat_userimage"/>
+        android:layout_marginTop="5dp"
+        android:layout_toRightOf="@+id/chat_userimage"
+        android:background="@color/grey" />
 
 </RelativeLayout>

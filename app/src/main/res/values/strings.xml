@@ -31,4 +31,17 @@
     <string name="settings">Settings</string>
 
     <string name="filled_bullet">\u25CF</string>
-    </resources>
+
+    <string name="ketentuan1">
+        1. Pengguna dapat menerima dan memberi informasi kepada penggunan lain berupa berita, kejadian atau peristiwa yang terjadi di wilayah bekasi yang berbentuk sebuah postingan yang menyertakan foto, deskripsi dan lokasi dari informasi tersebut berada
+    </string>
+    <string name="ketentuan2">
+        2. Contohnya kebakaran, banjir, macet, operasi penertiban lalu lintas (tilang), kecelakaan, orang hilang, event bekasi dan masih banyak lagi yang intinya adalah sebuah informasi yang berguna untuk masyarakat atau sesama pengguna aplikasi khususnya yang berada di wilayah bekasi.
+    </string>
+    <string name="ketentuan3">
+        3. Salah satu syarat untuk bisa memberikan informasi di aplikasi ini adalah ketika akan melakukan posting informasi harus menyertakan lokasi pada saat user itu berada atau lebih tepatnya lokasi kejadian dengan cara mengaktifkan gps. Kenapa harus ada lokasi dari informasi tersebut agar terbukti bahwa pengguna yang memposting informasi tersebut setidaknya benar benar berada di lokasi kejadian.
+    </string>
+    <string name="ketentuan4">
+        4. Jika pengguna melihat atau mendapat informasi yang salah atau tidak sesuai dengan tujuan dari aplikasi ini maka pengguna bisa melaporkan postingan atau informasi tersebut. Sistem akan mencatat berapa kali post tersebut direport, jika lebih dari 3 kali maka secara otomatis post tersebut tidak akan muncul di aplikasi atau terhapus
+    </string>
+</resources>

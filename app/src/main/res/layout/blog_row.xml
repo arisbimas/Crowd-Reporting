@@ -56,12 +56,12 @@
                 android:layout_marginTop="4dp"
                 android:layout_marginEnd="8dp"
                 android:layout_marginBottom="8dp"
+                android:ellipsize="end"
                 android:fontFamily="@font/roboto_regular"
+                android:maxLines="2"
                 android:text=""
                 android:textColor="@android:color/darker_gray"
                 android:textSize="12sp"
-                android:ellipsize="end"
-                android:maxLines="2"
                 app:layout_constraintBottom_toTopOf="@+id/blog_image"
                 app:layout_constraintEnd_toStartOf="@+id/popup_home"
                 app:layout_constraintHorizontal_bias="0.0"
@@ -190,25 +190,25 @@
             android:id="@+id/hideitem"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical"
             android:background="@color/putih"
             android:gravity="center_vertical|center_horizontal"
-            android:visibility="invisible"
-            >
+            android:orientation="vertical"
+            android:visibility="invisible">
 
             <ImageView
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:layout_marginTop="-50dp"
-                android:src="@android:drawable/stat_sys_warning"
-                android:background="@color/colorAmber_A400"/>
+                android:background="@color/colorAmber_A400"
+                android:src="@android:drawable/stat_sys_warning" />
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@android:color/white"
-                android:fontFamily="@font/comfortaa"
                 android:layout_marginStart="20dp"
                 android:layout_marginEnd="20dp"
+                android:background="@android:color/white"
+                android:fontFamily="@font/comfortaa"
                 android:gravity="center_vertical|center_horizontal"
                 android:text="Thanks for Reported this post."
                 android:textColor="@color/blue_500"

@@ -17,8 +17,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="10dp"
             android:layout_marginStart="15dp"
+            android:layout_marginTop="10dp"
             android:elevation="10dp"
             app:cardBackgroundColor="#fcfcfc"
             app:cardCornerRadius="10dp"
@@ -68,18 +68,19 @@
                         android:layout_height="wrap_content"
                         android:drawableLeft="@mipmap/icon_email"
                         android:drawableTint="#FF4081"
+                        android:editable="false"
                         android:hint="Your Email.."
                         android:singleLine="true"
-                        android:editable="false"
-                        android:visibility="gone"/>
+                        android:visibility="gone" />
                 </android.support.design.widget.TextInputLayout>
+
                 <android.support.design.widget.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="20dp"
                     android:layout_marginRight="20dp"
-                    app:counterMaxLength="15"
-                    app:counterEnabled="true">
+                    app:counterEnabled="true"
+                    app:counterMaxLength="15">
 
                     <EditText
                         android:id="@+id/setup_name"
@@ -88,18 +89,19 @@
                         android:drawableLeft="@mipmap/account"
                         android:drawableTint="#FF4081"
                         android:hint="Username..."
-                        android:singleLine="true"
                         android:inputType="textCapWords"
-                        android:maxLength="15"/>
+                        android:maxLength="15"
+                        android:singleLine="true" />
                 </android.support.design.widget.TextInputLayout>
+
                 <android.support.design.widget.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="20dp"
                     android:layout_marginRight="20dp"
                     android:layout_marginBottom="50dp"
-                    app:counterMaxLength="13"
-                    app:counterEnabled="true">
+                    app:counterEnabled="true"
+                    app:counterMaxLength="13">
 
                     <EditText
                         android:id="@+id/setup_phone"
@@ -108,9 +110,9 @@
                         android:drawableLeft="@mipmap/icon_phone"
                         android:drawableTint="#FF4081"
                         android:hint="Phone Number.."
-                        android:singleLine="true"
                         android:inputType="phone"
-                        android:maxLength="13"/>
+                        android:maxLength="13"
+                        android:singleLine="true" />
                 </android.support.design.widget.TextInputLayout>
 
             </LinearLayout>
@@ -130,19 +132,19 @@
 
 
     <!--<ProgressBar-->
-        <!--android:id="@+id/progressBar"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_alignParentTop="true"-->
-        <!--android:layout_centerHorizontal="true"-->
-        <!--android:layout_marginStart="0dp"-->
-        <!--android:layout_marginTop="0dp"-->
-        <!--android:layout_marginEnd="0dp"-->
-        <!--android:layout_marginBottom="0dp"-->
-        <!--android:indeterminate="true"-->
-        <!--android:visibility="invisible"-->
-        <!--tools:ignore="MissingConstraints"-->
-        <!--style="?android:attr/progressBarStyleHorizontal"/>-->
+    <!--android:id="@+id/progressBar"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_alignParentTop="true"-->
+    <!--android:layout_centerHorizontal="true"-->
+    <!--android:layout_marginStart="0dp"-->
+    <!--android:layout_marginTop="0dp"-->
+    <!--android:layout_marginEnd="0dp"-->
+    <!--android:layout_marginBottom="0dp"-->
+    <!--android:indeterminate="true"-->
+    <!--android:visibility="invisible"-->
+    <!--tools:ignore="MissingConstraints"-->
+    <!--style="?android:attr/progressBarStyleHorizontal"/>-->
 
 
 </RelativeLayout>

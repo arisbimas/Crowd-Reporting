@@ -34,7 +34,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     private Button btnRequestDirection;
     private GoogleMap googleMap;
-    private String serverKey = "AIzaSyBfrkZXKYufFH2V-f-5HbO748pa-IQoW-U";
+    private String serverKey = "AIzaSyCI-4RaDocwneRsw2ryTRPMf7NzGV-F1CE"; //"AIzaSyBfrkZXKYufFH2V-f-5HbO748pa-IQoW-U";
 //    private LatLng origin = new LatLng(37.7849569, -122.4068855);
 //    private LatLng destination = new LatLng(37.7814432, -122.4460177);
 

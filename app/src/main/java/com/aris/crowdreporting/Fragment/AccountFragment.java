@@ -340,6 +340,7 @@ public class AccountFragment extends DialogFragment implements
                                         });
                             } else {
                                 Toast.makeText(getActivity(), "err", Toast.LENGTH_SHORT).show();
+                                FirebaseAuth.getInstance().signOut();
                             }
                         } catch (Exception e) {
                             Log.d(TAG, "" + e.getMessage());

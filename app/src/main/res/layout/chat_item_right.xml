@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:padding="8dp">
 
@@ -11,22 +11,21 @@
         android:layout_alignParentRight="true">
 
         <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/profile_chat_img"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/profile_chat_img"
-            android:visibility="gone"
-            />
+            android:visibility="gone" />
 
         <TextView
             android:id="@+id/show_msg"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/background_right"
             android:layout_alignParentEnd="true"
-            android:text="hello"
+            android:background="@drawable/background_right"
             android:padding="8dp"
+            android:text="hello"
             android:textColor="@android:color/white"
-            android:textSize="18sp"/>
+            android:textSize="18sp" />
 
         <TextView
             android:id="@+id/time_msg"
@@ -36,16 +35,15 @@
             android:layout_alignParentEnd="true"
             android:layout_marginRight="6dp"
             android:text="00:00"
-            android:textSize="12sp"
-            android:textColor="#a0a0a0"/>
+            android:textColor="#a0a0a0"
+            android:textSize="12sp" />
 
         <TextView
             android:id="@+id/txt_seen"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/show_msg"
-            android:layout_alignParentRight="true"
-            />
+            android:layout_alignParentRight="true" />
     </RelativeLayout>
 
 </RelativeLayout>

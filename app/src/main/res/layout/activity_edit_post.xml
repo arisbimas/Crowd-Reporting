@@ -43,34 +43,34 @@
             </ImageButton>
 
             <!--<EditText-->
-                <!--android:id="@+id/post_lati"-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:layout_below="@+id/post_image"-->
-                <!--android:layout_marginStart="20dp"-->
-                <!--android:layout_marginTop="20dp"-->
-                <!--android:layout_marginEnd="20dp"-->
-                <!--android:layout_marginBottom="20dp"-->
-                <!--android:background="@drawable/inp_outline"-->
-                <!--android:hint="Latitude"-->
-                <!--android:inputType="text"-->
-                <!--android:padding="15dp"-->
-                <!--android:visibility="gone" />-->
+            <!--android:id="@+id/post_lati"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_below="@+id/post_image"-->
+            <!--android:layout_marginStart="20dp"-->
+            <!--android:layout_marginTop="20dp"-->
+            <!--android:layout_marginEnd="20dp"-->
+            <!--android:layout_marginBottom="20dp"-->
+            <!--android:background="@drawable/inp_outline"-->
+            <!--android:hint="Latitude"-->
+            <!--android:inputType="text"-->
+            <!--android:padding="15dp"-->
+            <!--android:visibility="gone" />-->
 
             <!--<EditText-->
-                <!--android:id="@+id/post_longi"-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:layout_below="@+id/post_lati"-->
-                <!--android:layout_marginStart="20dp"-->
-                <!--android:layout_marginTop="20dp"-->
-                <!--android:layout_marginEnd="20dp"-->
-                <!--android:layout_marginBottom="20dp"-->
-                <!--android:background="@drawable/inp_outline"-->
-                <!--android:hint="Longitude"-->
-                <!--android:inputType="text"-->
-                <!--android:padding="15dp"-->
-                <!--android:visibility="gone" />-->
+            <!--android:id="@+id/post_longi"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_below="@+id/post_lati"-->
+            <!--android:layout_marginStart="20dp"-->
+            <!--android:layout_marginTop="20dp"-->
+            <!--android:layout_marginEnd="20dp"-->
+            <!--android:layout_marginBottom="20dp"-->
+            <!--android:background="@drawable/inp_outline"-->
+            <!--android:hint="Longitude"-->
+            <!--android:inputType="text"-->
+            <!--android:padding="15dp"-->
+            <!--android:visibility="gone" />-->
 
 
             <android.support.design.widget.TextInputLayout
@@ -78,9 +78,9 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/post_image"
                 android:layout_marginStart="20dp"
+                android:layout_marginTop="20dp"
                 android:layout_marginEnd="20dp"
                 android:layout_marginBottom="20dp"
-                android:layout_marginTop="20dp"
                 app:counterEnabled="true"
                 app:counterMaxLength="140">
 
